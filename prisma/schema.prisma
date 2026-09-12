@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Attribute {
+  STRENGTH
+  ENDURANCE
+  INTELLECT
+  STRATEGY
+  DISCIPLINE
+  CREATIVITY
+}
+
+enum EvidenceType {
+  NONE
+  VIDEO
+  LOCATION_VIDEO
+  CONNECTED_SOURCE
+}
+
+enum CompletionStatus {
+  STARTED
+  EVIDENCE_PENDING
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id                  String              @id @default(cuid())
+  displayName         String
+  xp                  Int                 @default(0)
+  gold                Int                 @default(0)
+  level               Int                 @default(1)
+  momentum            Int                 @default(0)
+  lastActiveAt        DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  attributes          UserAttribute[]
+  quests              QuestCompletion[]
+  evidence            Evidence[]
+  strava              StravaConnection?
+  purchases           StorePurchase[]
+}
+
+model UserAttribute {
+  id        String    @id @default(cuid())
+  userId    String
+  attribute Attribute
+  value     Int       @default(0)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, attribute])
+}
+
+model Quest {
+  id                String       @id @default(cuid())
+  title             String
+  category          String
+  attribute         Attribute
+  xpReward          Int
+  goldReward        Int
+  evidenceType      EvidenceType @default(NONE)
+  distanceMeters    Int?
+  durationSeconds   Int?
+  checkpointLat     Float?
+  checkpointLng     Float?
+  checkpointRadiusM Int?
+  activeFrom        DateTime?
+  activeUntil       DateTime?
+  completions       QuestCompletion[]
+}
+
+model QuestCompletion {
+  id             String           @id @default(cuid())
+  userId         String
+  questId        String
+  status         CompletionStatus  @default(STARTED)
+  startedAt      DateTime          @default(now())
+  completedAt    DateTime?
+  evidence      Evidence?
+  awardedXp      Int               @default(0)
+  awardedGold    Int               @default(0)
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest          Quest             @relation(fields: [questId], references: [id], onDelete: Cascade)
+  @@index([userId, questId, startedAt])
+}
+
+model Evidence {
+  id             String       @id @default(cuid())
+  completionId   String       @unique
+  userId         String
+  type           EvidenceType
+  storageKey     String?
+  sha256         String?
+  capturedAt     DateTime
+  latitude       Float?
+  longitude      Float?
+  source         String?
+  sourceActivityId String?
+  durationMs      Int?
+  metadata       Json?
+  completion     QuestCompletion @relation(fields: [completionId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([source, sourceActivityId])
+  @@index([userId, sha256])
+}
+
+model StravaConnection {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  athleteId    String
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StorePurchase {
+  id        String   @id @default(cuid())
+  userId    String
+  itemKey   String
+  priceGold Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, itemKey])
+}

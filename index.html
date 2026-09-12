@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Life RPG | Solar Sanctuary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lilita+One&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,700,1,0" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root { --navy:#0f2744; --sky:#38bdf8; --blue:#0284c7; --gold:#fbbf24; --green:#22c55e; --purple:#8b5cf6; --paper:#f7fbff; --muted:#47627b; }
+    * { box-sizing:border-box; }
+    html { min-width:320px; background:#0284c7; }
+    body { margin:0; min-height:100vh; color:var(--navy); font-family:Manrope, sans-serif; background:linear-gradient(180deg,#7dd3fc 0%,#38bdf8 30%,#0284c7 100%); overflow-x:hidden; }
+    body:before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.28; background-image:radial-gradient(#fff 1.5px,transparent 1.5px); background-size:23px 23px; mask-image:linear-gradient(#000,transparent 80%); }
+    button { font:inherit; cursor:pointer; }
+    .app { width:min(100%,720px); min-height:100vh; margin:auto; position:relative; }
+    .topbar { position:sticky; top:0; z-index:10; padding:12px 16px 10px; background:linear-gradient(180deg,#0284c7,#0369a1); border-bottom:4px solid var(--navy); box-shadow:0 5px 0 #0f274455; color:#fff; }
+    .topline,.brandline,.resource-row,.section-head,.quest-top,.quest-bottom,.arena-row,.recap-stat { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .brandline { justify-content:flex-start; }
+    .avatar { width:44px; height:44px; border:3px solid var(--navy); border-bottom-width:5px; border-radius:15px; object-fit:cover; background:#38bdf8; }
+    .player-name,.display { font-family:'Lilita One',sans-serif; }
+    .player-name { font-size:19px; letter-spacing:.04em; text-shadow:0 2px 0 var(--navy); }
+    .rank { display:block; color:#fef08a; font:700 11px 'Lilita One'; letter-spacing:.08em; }
+    .resource { padding:6px 10px; color:var(--navy); background:linear-gradient(#fff7b2,#f59e0b); border:3px solid var(--navy); border-bottom-width:5px; border-radius:14px; box-shadow:0 2px 0 #78350f; font:700 13px 'Lilita One'; white-space:nowrap; }
+    .resource.streak-resource { background:linear-gradient(#fed7aa,#f97316); color:#7c2d12; }
+    main { padding:20px 16px 120px; position:relative; z-index:1; }
+    .screen { display:none; animation:rise .32s ease both; }
+    .screen.active { display:block; }
+    @keyframes rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    .eyebrow { color:#e0f2fe; font:700 12px 'Lilita One'; letter-spacing:.12em; text-transform:uppercase; }
+    h1,h2,h3,p { margin:0; }
+    h1 { margin:4px 0 14px; font:42px/1 'Lilita One'; letter-spacing:.02em; text-shadow:0 3px 0 var(--navy); color:#fff; }
+    h2 { font:25px/1.05 'Lilita One'; }
+    h3 { font:18px/1.1 'Lilita One'; }
+    .panel { background:linear-gradient(180deg,#fff,#e8f5ff); border:4px solid var(--navy); border-bottom-width:7px; border-radius:22px; box-shadow:0 7px 0 var(--navy),0 12px 22px #0f274433; padding:16px; margin-bottom:16px; }
+    .panel.dark { color:#fff; background:linear-gradient(145deg,#075985,#0f3b68); }
+    .hero-panel { position:relative; overflow:hidden; }
+    .hero-panel:after { content:"✦"; position:absolute; right:16px; top:12px; color:#fef08a; font-size:62px; opacity:.55; transform:rotate(12deg); }
+    .hero-meta { position:relative; z-index:1; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .level { font:54px/1 'Lilita One'; color:var(--navy); text-shadow:0 2px 0 #bae6fd; }
+    .rank-badge,.tag { display:inline-flex; align-items:center; gap:5px; width:max-content; padding:5px 9px; border:2px solid var(--navy); border-bottom-width:4px; border-radius:10px; color:#fff; background:linear-gradient(#a78bfa,#6d28d9); font:700 11px 'Lilita One'; letter-spacing:.06em; text-transform:uppercase; }
+    .tag.blue { background:linear-gradient(#38bdf8,#0284c7); } .tag.green { background:linear-gradient(#4ade80,#16a34a); } .tag.gold { color:#713f12; background:linear-gradient(#fde68a,#f59e0b); }
+    .meter { height:17px; padding:2px; overflow:hidden; border:3px solid var(--navy); border-radius:999px; background:#0f2744; }
+    .meter > span { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#38bdf8,#8b5cf6,#ec4899); }
+    .micro { color:var(--muted); font-size:11px; font-weight:800; }
+    .hero-panel .micro { color:#0284c7; }
+    .streak { background:linear-gradient(145deg,#f97316,#b45309); color:#fff; }
+    .streak h2 { text-shadow:0 2px 0 #78350f; }
+    .streak-track { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding:11px 8px; border:3px solid var(--navy); border-radius:16px; background:#78350f; }
+    .node { width:31px; height:31px; display:grid; place-items:center; border:2px solid var(--navy); border-bottom-width:4px; border-radius:10px; background:#22c55e; color:white; font:700 12px 'Lilita One'; }
+    .node.next { background:#facc15; color:#713f12; transform:scale(1.18); }
+    .node.locked { background:#451a03; color:#d97706; }
+    .journey { position:relative; overflow:hidden; background:linear-gradient(180deg,#f8fdff,#dbeafe); }
+    .journey:before { content:""; position:absolute; inset:58px 0 70px; opacity:.45; background-color:#bae6fd; background-image:linear-gradient(45deg,#93c5fd 25%,transparent 25%),linear-gradient(-45deg,#93c5fd 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#93c5fd 75%),linear-gradient(-45deg,transparent 75%,#93c5fd 75%); background-size:22px 22px; background-position:0 0,0 11px,11px -11px,-11px 0; }
+    .journey-map { position:relative; min-height:445px; margin-top:8px; }
+    .journey-map svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .journey-node { position:absolute; z-index:1; display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .journey-node .stone { width:72px; height:55px; display:grid; place-items:center; border:3px solid var(--navy); border-bottom-width:6px; border-radius:16px; background:linear-gradient(#fff,#dbeafe); box-shadow:0 4px 0 var(--navy); font:700 13px 'Lilita One'; text-align:center; }
+    .journey-node .stone.done { color:#fff; background:linear-gradient(#4ade80,#16a34a); border-bottom-color:#14532d; }
+    .journey-node .stone.active { color:#fff; background:linear-gradient(#60a5fa,#2563eb); border-color:var(--navy); border-bottom-color:#1e3a8a; box-shadow:0 0 0 4px #93c5fd,0 5px 0 var(--navy); }
+    .journey-node .stone.boss { color:#713f12; background:linear-gradient(#fde68a,#eab308); border-bottom-color:#854d0e; width:82px; }
+    .journey-label { padding:4px 7px; border:2px solid var(--navy); border-radius:9px; background:#fff; color:var(--navy); font:700 10px 'Lilita One'; white-space:nowrap; box-shadow:0 2px 0 var(--navy); }
+    .journey-boss { top:4px; left:50%; transform:translateX(-50%); }
+    .journey-deep { top:105px; right:12%; }
+    .journey-read { top:215px; left:10%; }
+    .journey-active { top:306px; right:27%; }
+    .journey-done { top:392px; left:7%; }
+    .journey-player { position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:36px; height:36px; display:grid; place-items:center; border:3px solid var(--navy); border-bottom-width:5px; border-radius:12px; background:#38bdf8; color:#fff; font-size:20px; box-shadow:0 3px 0 var(--navy); }
+    .journey-copy { position:relative; z-index:2; padding:7px 9px; border:2px solid var(--navy); border-radius:11px; background:#fde68a; color:#713f12; font:700 11px 'Lilita One'; text-align:center; box-shadow:0 2px 0 #854d0e; }
+    .journey-action { position:relative; z-index:2; width:100%; margin-top:4px; }
+    .coach { display:flex; gap:12px; align-items:center; }
+    .coach img { width:62px; height:62px; object-fit:cover; border:3px solid var(--navy); border-bottom-width:5px; border-radius:18px; }
+    .speech { flex:1; position:relative; padding:12px; border:3px solid var(--navy); border-radius:16px; background:#fff; font-size:13px; font-weight:800; }
+    .speech:before { content:""; position:absolute; left:-10px; top:22px; border-width:7px 10px 7px 0; border-style:solid; border-color:transparent var(--navy) transparent transparent; }
+    .stat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .stat { padding:12px; border:3px solid var(--navy); border-bottom-width:5px; border-radius:16px; background:#fff; }
+    .stat:nth-child(1),.stat:nth-child(4) { background:#fff7d6; } .stat:nth-child(2),.stat:nth-child(5) { background:#e0f2fe; } .stat:nth-child(3),.stat:nth-child(6) { background:#dcfce7; }
+    .stat-head { display:flex; justify-content:space-between; align-items:start; gap:5px; }
+    .stat b { font:30px/1 'Lilita One'; } .stat small { display:block; margin-top:6px; color:var(--muted); font-weight:800; font-size:10px; }
+    .small-meter { height:9px; margin-top:9px; border:2px solid var(--navy); border-radius:99px; background:#cbd5e1; overflow:hidden; } .small-meter span { display:block; height:100%; background:var(--blue); }
+    .quest { padding:13px; background:linear-gradient(180deg,#fff,#edf7ff); border:3px solid var(--navy); border-bottom-width:5px; border-radius:18px; margin-top:10px; }
+    .quest-title { font:19px 'Lilita One'; } .quest-reward { color:#b45309; font:700 12px 'Lilita One'; white-space:nowrap; }
+    .quest-bottom { margin-top:10px; align-items:end; } .quest-bottom p { color:var(--muted); font-size:12px; font-weight:800; }
+    .btn { border:3px solid var(--navy); border-bottom-width:6px; border-radius:14px; padding:10px 14px; color:#fff; font:700 14px 'Lilita One'; letter-spacing:.04em; text-transform:uppercase; box-shadow:0 3px 0 #0f2744; transition:.12s; }
+    .btn:active { transform:translateY(3px); border-bottom-width:3px; box-shadow:none; } .btn.blue { background:linear-gradient(#60a5fa,#2563eb); } .btn.green { background:linear-gradient(#4ade80,#16a34a); } .btn.gold { color:#713f12; background:linear-gradient(#fde047,#eab308); } .btn.purple { background:linear-gradient(#c084fc,#7e22ce); }
+    .filter-row { display:flex; gap:8px; overflow:auto; padding:3px 1px 8px; } .filter { flex:none; padding:8px 12px; background:#fff; border:3px solid var(--navy); border-bottom-width:5px; border-radius:13px; color:var(--navy); font:700 12px 'Lilita One'; } .filter.active { color:#fff; background:#7c3aed; }
+    .podium { display:grid; grid-template-columns:1fr 1.1fr 1fr; align-items:end; gap:7px; margin-top:18px; } .place { text-align:center; } .place .portrait { width:66px; height:66px; margin:auto; object-fit:cover; border:4px solid var(--navy); border-radius:19px; background:#fef08a; } .place.center { transform:translateY(-14px); } .pillar { margin-top:7px; padding:11px 4px; min-height:64px; border:3px solid var(--navy); border-bottom-width:6px; border-radius:15px 15px 0 0; background:#dbeafe; font:14px 'Lilita One'; } .center .pillar { min-height:94px; background:linear-gradient(#fde047,#f59e0b); }
+    .arena-row { padding:11px; margin-top:8px; background:#fff; border:3px solid var(--navy); border-bottom-width:5px; border-radius:15px; } .arena-row.you { background:linear-gradient(#fde68a,#f59e0b); } .arena-avatar { width:38px; height:38px; border:3px solid var(--navy); border-radius:12px; display:grid; place-items:center; background:#38bdf8; font:700 12px 'Lilita One'; }
+    .recap { background:linear-gradient(150deg,#7c3aed,#ec4899 62%,#f59e0b); color:#fff; min-height:340px; display:flex; flex-direction:column; justify-content:space-between; } .recap h2 { font-size:39px; text-shadow:0 3px 0 #4c1d95; } .recap-stat { padding:14px; border:3px solid var(--navy); border-radius:17px; background:#0f2744cc; } .recap-stat strong { font:38px 'Lilita One'; color:#fde047; }
+    nav { position:fixed; bottom:0; left:0; right:0; z-index:20; background:linear-gradient(#fff,#dbeafe); border-top:4px solid var(--navy); box-shadow:0 -5px 16px #0f274433; } .nav-inner { width:min(100%,720px); margin:auto; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; height:76px; padding:7px 8px; } .nav-item { min-height:55px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:0; background:transparent; color:#47627b; font:700 11px 'Lilita One'; text-transform:uppercase; } .nav-item .material-symbols-outlined { font-size:25px; } .nav-item.active { color:#0284c7; } .nav-item.active .material-symbols-outlined { padding:5px 12px; border:3px solid var(--navy); border-bottom-width:5px; border-radius:13px; background:#bae6fd; }
+    @media (min-width:700px) { main { display:grid; grid-template-columns:1fr 1fr; gap:16px; } main .wide { grid-column:1/-1; } .screen.active { grid-column:1/-1; } .screen#home { display:none; } .screen#home.active { display:grid; grid-template-columns:1.1fr .9fr; gap:16px; } .screen#home.active > .wide { grid-column:1/-1; } .panel { margin-bottom:0; } }
+    /* Final visual polish: stronger hierarchy, cleaner game HUD, and calmer card rhythm. */
+    body { background:radial-gradient(circle at 50% -8%,#bae6fd 0,#38bdf8 27%,#0284c7 72%,#075985 100%); }
+    body:after { content:""; position:fixed; inset:auto 0 0; height:180px; pointer-events:none; opacity:.18; background:linear-gradient(135deg,transparent 0 46%,#fff 46% 47%,transparent 47% 54%,#fff 54% 55%,transparent 55%); background-size:44px 44px; mask-image:linear-gradient(transparent,#000); }
+    .app { width:min(100%,960px); }
+    .topbar { padding:13px 20px 12px; background:linear-gradient(180deg,#075985 0%,#0284c7 52%,#0369a1 100%); box-shadow:0 5px 0 #0f274466,0 12px 24px #0f274433; }
+    .topline { max-width:920px; margin:auto; }
+    .brandline { min-width:0; }
+    .brandline > div:last-child { min-width:0; }
+    .player-name { display:flex; align-items:center; gap:7px; font-size:20px; }
+    .player-name .tag { padding:3px 7px; font-size:10px; }
+    .resource-row { gap:7px; }
+    .resource { padding:7px 11px; box-shadow:0 3px 0 #78350f, inset 0 2px 0 #fff9; }
+    main { max-width:920px; margin:auto; padding:28px 20px 128px; }
+    .screen.active { animation:rise .28s ease both; }
+    .panel { position:relative; border-width:3px; border-bottom-width:6px; border-radius:20px; box-shadow:0 6px 0 var(--navy),0 14px 26px #0f27442e; padding:18px; }
+    .panel:not(.dark):not(.streak):not(.recap):before { content:""; position:absolute; top:-3px; left:20px; right:20px; height:5px; border-radius:0 0 8px 8px; background:linear-gradient(90deg,#38bdf8,#8b5cf6,#fbbf24); }
+    .hero-panel { min-height:190px; background:linear-gradient(135deg,#fff 0%,#eef9ff 58%,#dbeafe 100%); }
+    .hero-panel:before { content:""; position:absolute; inset:0 auto auto 0; width:42%; height:100%; opacity:.16; background:repeating-linear-gradient(135deg,transparent 0 16px,#38bdf8 16px 18px); }
+    .hero-panel:after { right:24px; top:8px; font-size:76px; color:#fbbf24; text-shadow:0 3px 0 #b45309; }
+    .level { font-size:58px; letter-spacing:.02em; }
+    .hero-meta { padding:2px 2px 0; }
+    .section-head > div > .eyebrow { display:block; margin-bottom:4px; }
+    .streak { min-height:160px; background:linear-gradient(145deg,#fb923c 0%,#ea580c 48%,#9a3412 100%); box-shadow:0 6px 0 #78350f,0 14px 26px #7c2d1244; }
+    .streak-track { background:linear-gradient(90deg,#78350f,#451a03); box-shadow:inset 0 3px 8px #1c0b02; }
+    .journey { border-color:#0b3155; background:linear-gradient(180deg,#ffffff 0%,#e0f2fe 100%); }
+    .journey:before { opacity:.38; }
+    .journey-map { min-height:430px; }
+    .journey-action { min-height:48px; font-size:16px; letter-spacing:.02em; }
+    .coach { padding:2px; }
+    .speech { box-shadow:0 3px 0 #cbd5e1; }
+    .stat { transition:transform .15s ease,box-shadow .15s ease; }
+    .stat:hover,.quest:hover,.arena-row:hover { transform:translateY(-2px); box-shadow:0 5px 0 var(--navy); }
+    .quest { padding:15px; border-radius:16px; background:linear-gradient(135deg,#fff 0%,#f4faff 72%,#e0f2fe 100%); }
+    .quest-title { font-size:21px; }
+    .quest-bottom { gap:12px; }
+    .quest-bottom > div { min-width:0; }
+    .quest-bottom p { margin-top:3px; }
+    .btn { min-height:42px; }
+    .filter-row { scrollbar-width:none; }
+    .filter-row::-webkit-scrollbar { display:none; }
+    .dark { position:relative; overflow:hidden; }
+    .dark:after { content:"✦"; position:absolute; right:18px; bottom:-16px; color:#7dd3fc; opacity:.22; font-size:96px; transform:rotate(18deg); pointer-events:none; }
+    .podium { min-height:260px; }
+    .recap { min-height:390px; padding:22px; background:linear-gradient(145deg,#4c1d95 0%,#7c3aed 38%,#db2777 72%,#f59e0b 100%); }
+    .recap-stat { background:#0f2744dd; box-shadow:inset 0 2px 0 #fff3; }
+    nav { background:linear-gradient(180deg,#ffffff 0%,#e0f2fe 100%); }
+    .nav-inner { width:min(100%,960px); height:80px; }
+    .nav-item { color:#527089; }
+    .nav-item.active { color:#0369a1; }
+    .capture-modal { position:fixed; inset:0; z-index:50; display:none; align-items:flex-end; justify-content:center; padding:12px; background:#061a2dcc; }
+    .capture-modal.open { display:flex; }
+    .capture-sheet { width:min(100%,560px); max-height:92vh; overflow:auto; padding:18px; border:4px solid var(--navy); border-bottom-width:7px; border-radius:24px 24px 18px 18px; background:linear-gradient(#fff,#e0f2fe); box-shadow:0 -8px 0 #0f2744,0 18px 36px #0006; }
+    .capture-sheet h2 { margin-bottom:6px; }
+    .capture-copy { color:var(--muted); font-size:13px; font-weight:800; line-height:1.45; }
+    .capture-video { width:100%; aspect-ratio:4/3; margin:14px 0; border:4px solid var(--navy); border-radius:18px; background:#082f49; object-fit:cover; }
+    .capture-controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .capture-input { width:100%; margin-top:10px; padding:11px 12px; border:3px solid var(--navy); border-radius:12px; color:var(--navy); background:#fff; font:700 14px Manrope,sans-serif; }
+    .capture-status { min-height:22px; margin:9px 0; color:#0369a1; font:700 13px 'Lilita One'; }
+    .gps-readout { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; }
+    .gps-chip { padding:10px; border:3px solid var(--navy); border-radius:12px; background:#fff; font:700 12px 'Lilita One'; }
+    #run-map { display:none; height:300px; margin:12px 0; overflow:hidden; border:4px solid var(--navy); border-radius:18px; box-shadow:0 4px 0 var(--navy); }
+    #run-map.visible { display:block; }
+    .leaflet-container { font-family:Manrope,sans-serif; }
+    @media (max-width:699px) {
+      .topbar { padding-left:12px; padding-right:12px; }
+      .topline { gap:7px; }
+      .avatar { width:42px; height:42px; }
+      .player-name { font-size:17px; }
+      .resource { padding:6px 8px; font-size:12px; }
+      main { padding-left:12px; padding-right:12px; padding-top:20px; }
+      .panel { padding:15px; border-radius:18px; }
+      .hero-panel { min-height:176px; }
+      .level { font-size:50px; }
+      .journey-map { min-height:430px; margin-left:-2px; margin-right:-2px; }
+      .journey-deep { right:8%; }
+      .journey-active { right:23%; }
+      .journey-read { left:7%; }
+      .journey-done { left:4%; }
+      .podium { min-height:220px; }
+      .place .portrait { width:58px; height:58px; }
+      .nav-inner { height:74px; padding-left:3px; padding-right:3px; }
+      .nav-item { font-size:10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topline">
+        <div class="brandline"><img class="avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGt52qUVt4FOvBKbkG5ldJBO9PRZju18MayaDaLTlCqy1IsKZlxCYmS6Cl9wgNWIaLQZ0Ggz_5Fsx7WpKwwSM3CVzmudwXJ76hrNXoWPw3AUqCuZ14XksaBMRh9li9stMMBEPgDT1KaNZY6hzPr3nWZJqpVchTzlE3TcuUO8Qj7ezzIdxhNLR3QZg2UBK-kbGVXc92VZigCySD_EmB4OjV7R-syw9qlpa8mIUH-ZqC0ISVZZQWuv003A" alt="Player avatar" /><div><div class="player-name">KENNETH <span class="tag blue">LV 17</span></div><span class="rank">ADVENTURER III</span></div></div>
+        <div class="resource-row"><div id="gold-balance" class="resource">● 1,250 G</div><div class="resource streak-resource">🔥 12</div></div>
+      </div>
+    </header>
+    <main>
+      <section id="home" class="screen active">
+        <div class="panel hero-panel wide"><div class="hero-meta"><div><span class="eyebrow">Solar Sanctuary</span><div class="level">LEVEL 17</div><span class="tag green">Adventurer III</span></div><div style="text-align:right"><span class="micro">NEXT LEVEL</span><h3>560 XP</h3><span class="micro">3,400 TOTAL</span></div></div><div style="margin-top:16px"><div class="section-head"><b>XP CORE</b><strong>2,840 / 3,400</strong></div><div class="meter"><span style="width:83.5%"></span></div></div></div>
+        <div class="panel streak"><div class="section-head"><div><span class="eyebrow">Momentum</span><h2>12-DAY FLAME</h2></div><span class="tag gold">RADIANT</span></div><p style="margin-top:8px;font-size:13px;font-weight:800;color:#fff7ed">Two days to your Solar Crest reward.</p><div class="streak-track"><span class="node">3</span><span class="node">7</span><span class="node">✓</span><span class="node next">14</span><span class="node locked">30</span><span class="node locked">60</span></div></div>
+        <div class="panel journey wide"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Thursday Solar Campaign</span><h2>Day Quest Journey</h2></div><span class="tag green">1 / 5 DONE</span></div><div class="journey-map"><svg viewBox="0 0 320 445" preserveAspectRatio="none" aria-hidden="true"><path d="M42 407 Q120 365 238 323 T72 220 T242 110 T160 30" fill="none" stroke="#0f2744" stroke-width="12" stroke-linecap="round"></path><path d="M42 407 Q120 365 238 323 T72 220 T242 110 T160 30" fill="none" stroke="#7dd3fc" stroke-width="7" stroke-linecap="round"></path><path d="M42 407 Q120 365 238 323" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round"></path></svg><div class="journey-node journey-boss"><div class="journey-copy">FINAL NODE</div><div class="stone boss">👑<br> BOSS GATEWAY</div><div class="journey-label">Evening Review &amp; Boss<br><small>+150 Gold &amp; Mystery Chest</small></div></div><div class="journey-node journey-deep"><div class="stone">🔒<br>4</div><div class="journey-label">Deep Work (90m)</div></div><div class="journey-node journey-read"><div class="stone">🔒<br>3</div><div class="journey-label">Read 20 Pages</div></div><div class="journey-node journey-active"><div class="journey-player">🎮</div><div class="stone active">2<br><small>ACTIVE</small></div><div class="journey-label">ACTIVE: CODE 60M</div></div><div class="journey-node journey-done"><div class="stone done">✓<br><small>DONE</small></div><div class="journey-label">Run 3 KM ✓</div></div></div><button class="btn green journey-action" id="journey-resume">▶ Resume quest: Code 60 min</button></div>
+        <div class="panel"><div class="coach"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGt52qUVt4FOvBKbkG5ldJBO9PRZju18MayaDaLTlCqy1IsKZlxCYmS6Cl9wgNWIaLQZ0Ggz_5Fsx7WpKwwSM3CVzmudwXJ76hrNXoWPw3AUqCuZ14XksaBMRh9li9stMMBEPgDT1KaNZY6hzPr3nWZJqpVchTzlE3TcuUO8Qj7ezzIdxhNLR3QZg2UBK-kbGVXc92VZigCySD_EmB4OjV7R-syw9qlpa8mIUH-ZqC0ISVZZQWuv003A" alt="Coach Solar" /><div class="speech"><span class="tag blue">Coach Solar</span><p style="margin-top:6px">Train <b>Creativity</b> next to unlock your balanced-day bonus.</p></div></div></div>
+        <div class="panel wide"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Your build</span><h2>Attributes</h2></div><span class="tag blue">6 STATS</span></div><div id="stat-grid" class="stat-grid" style="margin-top:12px"></div></div>
+        <div class="panel wide"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Today's path</span><h2>Quest Deck</h2></div><button class="btn purple" data-screen="quests">View all</button></div><div id="home-quests"></div></div>
+      </section>
+      <section id="quests" class="screen"><div class="section-head"><div><span class="eyebrow">Daily campaign</span><h1>QUEST LOG</h1></div><span class="tag gold">3 READY</span></div><div class="filter-row"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="fitness">Fitness</button><button class="filter" data-filter="mind">Mind</button><button class="filter" data-filter="discipline">Discipline</button></div><div class="panel dark wide"><div class="section-head"><div><span class="eyebrow">Weekly boss</span><h2>THE 5-HOUR BUILDER</h2></div><span class="tag gold">2D 14H</span></div><p style="margin-top:8px;color:#dbeafe;font-size:13px;font-weight:800">Guild goal: stack 20 hours of deep work. Your output is 66% complete.</p><div class="meter" style="margin-top:13px"><span style="width:66%;background:linear-gradient(90deg,#c084fc,#8b5cf6)"></span></div><button class="btn green" style="width:100%;margin-top:14px" id="raid-btn">Engage raid</button></div><div class="wide" id="quest-list"></div></section>
+      <section id="hero" class="screen"><div class="section-head"><div><span class="eyebrow">Character sheet</span><h1>THE ARCHITECT</h1></div><span class="tag gold">RANK III</span></div><div class="panel wide" style="text-align:center"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHiwixMuotbeoMJEJ5lm3DqwExEBE39ma3XHW9MBYJhbXFDtdDBCuoDRU6sN9uv2-EKBRJ-R8VGCp6n-YxKwwdMsKTSVnQ6ZH7FJRxuXj_UgsuaKT-ndODozvC5SiZj1SSObjG4qp7DuOyAQwM8kGcBDP1NC0TufNKYkOmgU24WfrxMC-0zFB0N_zXNE5RuJchiuwIbMaEnRTfu0WNDAQqv50kxfAnI8Qy7Skh0nTNqNVcoAUFaZ1tWg" alt="Kenneth hero" style="width:190px;height:230px;object-fit:cover;border:4px solid var(--navy);border-radius:22px;box-shadow:0 7px 0 var(--navy)" /><h2 style="margin-top:14px">HYBRID SYSTEM SYNTHESIS</h2><p class="micro" style="margin-top:5px">Solar Knights • Realm #142</p></div><div class="panel wide"><div class="section-head"><h2>Battle attributes</h2><span class="tag blue">LIVE</span></div><div id="hero-stats" class="stat-grid" style="margin-top:12px"></div></div></section>
+      <section id="arena" class="screen"><div class="section-head"><div><span class="eyebrow">Weekly league</span><h1>ARENA</h1></div><span class="tag gold">ELITE II</span></div><div class="panel dark wide"><div class="section-head"><div><span class="eyebrow">Season 08</span><h2>TOP 35% ADVANCE</h2></div><span class="tag gold">18H 42M</span></div><div class="podium"><div class="place"><img class="portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvK52_tzLsLAXtP6Gi-4okSMsCMDFwIpbDIgNGdtCyGAagA08CbR-9owC3n-3gIxIlZIyXEYzc6XYUEbkMpEEubPOBwwiU7z5XI7FYEL_CyBFU_eWprIsI6Z1GqpES1puqira09KpVpKB-2sjxi0b4mnakiId8bTwdYEmQa27adxCJM5pFhvDVhuCVzorKFJ3DoGkV7VzBhc94IaJtnm0Wms0vZOv7-N7eoypSH26QtDVrMjsBnilNtw" alt="Second place" /><div class="pillar">#2<br><small>TheIncgi</small></div></div><div class="place center"><img class="portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYXfec6OZVO0LSTavgvk0tKaW_QNqNvb99bFyvavhF2cEwqISoenrq_95HYjSp5zRmiZBJhHqMG5PtibXJpIOp_H0a1ozvkuUJqb6rOVnhABV-F4HihHYTDF6bZ-n5Kn95LcKYiFgafO8S1f5_buoNqEtIlW11N59nwOAbV3x6oCUiuk9qXYKxP-pQ8AmTYJugb8Dqdf1USUvymNUrIm8BJ12Tklj0ZS6g7EKi1F313bmvApzp3QT4PA" alt="First place" /><div class="pillar">👑 #1<br><small>Sarra</small></div></div><div class="place"><img class="portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLzoUFs_tmcHwqGL173AAneWAfuZrmqOlJkVflvaJd6w9OQYmYRFkxSB0SHyKZ11cSTexSyAMZDslnMg56wALx0dqqXSDUDg4v4Tj-WAgJSIrJvqwS36yDeMdDlRgJlre6rUVQsoDpJoByibEODy7V2qaTF-ftIDbR88Pt5xEbAK0-qaa6So25gYZGBsHt4c5e7OTtVjSmmNknDx4PZmr3NWP3c2atcM99-MZWT498vLuoi225tJYrbA" alt="Third place" /><div class="pillar">#3<br><small>JAVATATOR</small></div></div></div></div><div class="panel wide"><div class="section-head"><h2>Rankings</h2><span class="micro">WEEKLY XP + MOMENTUM</span></div><div id="arena-list"></div></div><button class="btn green wide" id="match-btn" style="width:100%">Play arena match</button></section>
+      <section id="wrapped" class="screen"><div class="section-head"><div><span class="eyebrow">Monthly recap</span><h1>LIFE WRAPPED</h1></div><span class="tag gold">AUG 2026</span></div><div class="panel recap wide"><div><span class="eyebrow">Your month in motion</span><h2>YOU BUILT<br>A BETTER ARC.</h2></div><div class="recap-stat"><div><span class="micro" style="color:#e9d5ff">BIGGEST GAIN</span><strong>+17</strong><p>Intellect</p></div><div><span class="micro" style="color:#e9d5ff">BEST STREAK</span><strong>12d</strong><p>Solar Flame</p></div></div><button class="btn gold" id="share-btn">Share recap</button></div><div class="panel wide"><div class="section-head"><h2>Next arc</h2><span class="tag purple">SEPTEMBER</span></div><p style="margin-top:10px;font-weight:800;color:var(--muted)">Build your Creativity score through three focused quests each week.</p></div></section>
+    </main>
+    <nav><div class="nav-inner"><button class="nav-item active" data-screen="home"><span class="material-symbols-outlined">cottage</span>Home</button><button class="nav-item" data-screen="quests"><span class="material-symbols-outlined">explore</span>Quests</button><button class="nav-item" data-screen="hero"><span class="material-symbols-outlined">shield</span>Hero</button><button class="nav-item" data-screen="arena"><span class="material-symbols-outlined">leaderboard</span>Arena</button><button class="nav-item" data-screen="wrapped"><span class="material-symbols-outlined">auto_awesome</span>Wrapped</button></div></nav>
+    <div id="capture-modal" class="capture-modal" role="dialog" aria-modal="true" aria-labelledby="capture-title"><div class="capture-sheet"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Evidence capture</span><h2 id="capture-title">Routine proof</h2></div><button class="btn gold" id="capture-close">Close</button></div><p id="capture-copy" class="capture-copy"></p><video id="capture-video" class="capture-video" autoplay muted playsinline></video><div id="run-map" aria-label="Live jogging route map"></div><div id="study-fields" hidden><input id="study-subject" class="capture-input" placeholder="What subject did you study?" /><textarea id="study-summary" class="capture-input" rows="3" placeholder="Summarize what you learned in your own words"></textarea></div><div id="gps-readout" class="gps-readout" hidden><div class="gps-chip">GPS <span id="gps-state">Waiting</span></div><div class="gps-chip">Distance <span id="gps-distance">0 m</span></div><div class="gps-chip">Time <span id="gps-time">00:00</span></div><div class="gps-chip">Pace <span id="gps-pace">--:-- / km</span></div></div><div id="capture-status" class="capture-status">Camera permission is required.</div><div class="capture-controls"><button class="btn purple" id="capture-start">Start 5s proof</button><button class="btn green" id="capture-submit" disabled>Submit proof</button></div><button class="btn blue" id="strava-connect" hidden style="width:100%;margin-top:10px">Connect Strava instead</button></div></div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const stats = [
+      ['Strength',62,'Fitness'],['Endurance',54,'Cardio'],['Intellect',81,'Study'],['Strategy',68,'Chess'],['Discipline',73,'Habits'],['Creativity',41,'Projects']
+    ];
+    const quests = [
+      {id:'quest-water-2l', type:'discipline', tag:'HYDRATION', title:'Drink Water', detail:'Camera-only proof • 5 second capture.', reward:'+45 XP  •  +12 G', action:'Record proof', state:'ready', evidence:'video'},
+      {id:'quest-study-summary', type:'mind', tag:'STUDY', title:'Study Summary', detail:'9:00–12:00 • subject and summary proof.', reward:'+100 XP  •  +35 G', action:'Record proof', state:'ready', evidence:'study'},
+      {id:'quest-run-3k', type:'fitness', tag:'ENDURANCE', title:'Run 3 KM', detail:'Live GPS route or verified Strava activity.', reward:'+80 XP  •  +20 G', action:'Start GPS run', state:'progress', evidence:'gps'},
+      {id:'quest-blue-vale', type:'discipline', tag:'CHECKPOINT', title:'Blue Vale Checkpoint', detail:'On-site GPS plus 5 second camera proof.', reward:'+120 XP  •  +45 G', action:'Unlock on-site', state:'ready', evidence:'location-video'}
+    ];
+    const statMarkup = stats.map(([name,value,source]) => `<article class="stat"><div class="stat-head"><div><h3>${name}</h3><small>${source}</small></div><b>${value}</b></div><div class="small-meter"><span style="width:${value}%"></span></div></article>`).join('');
+    document.querySelector('#stat-grid').innerHTML = statMarkup;
+    document.querySelector('#hero-stats').innerHTML = statMarkup;
+    function questMarkup(items) { return items.map((quest,index) => `<article class="quest" data-type="${quest.type}" data-quest-id="${quest.id}"><div class="quest-top"><span class="tag ${quest.type==='mind'?'purple':quest.type==='discipline'?'green':'blue'}">${quest.tag}</span><span class="quest-reward">${quest.reward}</span></div><div class="quest-bottom"><div><div class="quest-title">${quest.title}</div><p>${quest.detail}</p></div>${quest.state==='done'?'<span class="tag green">DONE</span>':`<button class="btn ${quest.state==='claim'?'green':quest.state==='progress'?'blue':'purple'} quest-action" data-index="${index}">${quest.action}</button>`}</div></article>`).join(''); }
+    document.querySelector('#home-quests').innerHTML = questMarkup(quests.slice(0,3));
+    document.querySelector('#quest-list').innerHTML = questMarkup(quests);
+    const ranks = [['#420','Trip','78,410','TR'],['#421','Seruz','78,395','SZ'],['#422','Daladred','78,380','DL'],['#423','Kenneth','78,360','K']];
+    document.querySelector('#arena-list').innerHTML = ranks.map((r,i)=>`<div class="arena-row ${i===3?'you':''}"><div class="brandline"><div class="arena-avatar">${r[3]}</div><div><b>${r[1]}${i===3?' (YOU)':''}</b><div class="micro">Solar Knights Clan</div></div></div><strong>⭐ ${r[2]}</strong></div>`).join('');
+    function showScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id)); document.querySelectorAll('[data-screen]').forEach(b=>b.classList.toggle('active',b.dataset.screen===id)); window.scrollTo({top:0,behavior:'smooth'}); }
+    const capture = { quest:null, completionId:null, stream:null, recorder:null, chunks:[], startedAt:0, points:[], watchId:null, map:null, line:null, marker:null, timer:null, distance:0 };
+    const modal = document.querySelector('#capture-modal');
+    const captureStatus = document.querySelector('#capture-status');
+    const captureVideo = document.querySelector('#capture-video');
+    function setCaptureStatus(message) { captureStatus.textContent = message; }
+    function closeCapture() { if (capture.stream) capture.stream.getTracks().forEach(track => track.stop()); if (capture.watchId !== null) navigator.geolocation.clearWatch(capture.watchId); if (capture.timer) clearInterval(capture.timer); capture.stream=null; capture.watchId=null; capture.timer=null; modal.classList.remove('open'); }
+    async function startServerQuest(quest) { if (window.location.protocol === 'file:') return { completionId:null }; const response = await fetch(`/api/quests/${quest.id}/start`, { method:'POST', headers:{'x-user-id':'demo-user'} }); if (!response.ok) throw new Error((await response.json()).error || 'Quest could not be started'); return response.json(); }
+    async function openRoutine(quest, action) {
+      capture.quest=quest; capture.points=[]; capture.distance=0; capture.completionId=null; modal.classList.add('open'); document.querySelector('#capture-title').textContent=quest.title; document.querySelector('#capture-copy').textContent=quest.evidence==='study'?'Record a five-second proof clip after studying. Add the subject and a short summary for review.':quest.evidence==='gps'?'Press start, allow GPS, and move naturally. The red line is your live route; press stop when you finish.':'Keep the camera in-app. Show the water and take one continuous five-second proof clip.'; document.querySelector('#study-fields').hidden=quest.evidence!=='study'; document.querySelector('#gps-readout').hidden=quest.evidence!=='gps'; document.querySelector('#run-map').classList.toggle('visible',quest.evidence==='gps'); document.querySelector('#strava-connect').hidden=quest.evidence!=='gps'; document.querySelector('#capture-start').textContent=quest.evidence==='gps'?'Start GPS tracking':'Start 5s proof'; document.querySelector('#capture-submit').disabled=true; document.querySelector('#capture-submit').textContent=quest.evidence==='gps'?'Stop & submit':'Submit proof'; setCaptureStatus('Starting secure quest session…');
+      if (quest.evidence==='gps') setupRunMap();
+      try { const started=await startServerQuest(quest); capture.completionId=started.completionId; setCaptureStatus(quest.evidence==='gps'?'Waiting for GPS permission…':'Camera permission is required.'); if (quest.evidence==='gps') startGpsTracking(); else await prepareCamera(); } catch(error) { setCaptureStatus(error.message || 'Quest session could not start.'); }
+    }
+    async function prepareCamera() { if (!navigator.mediaDevices?.getUserMedia) throw new Error('This browser does not support camera capture'); capture.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}); captureVideo.srcObject=capture.stream; }
+    function setupRunMap() { if (!window.L) { setCaptureStatus('Map library is still loading.'); return; } if (!capture.map) { capture.map=L.map('run-map',{zoomControl:true}).setView([20,0],2); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(capture.map); capture.line=L.polyline([],{color:'#ef233c',weight:6,lineCap:'round'}).addTo(capture.map); } else { capture.line.setLatLngs([]); } setTimeout(()=>capture.map.invalidateSize(),50); }
+    function startGpsTracking() { if (!navigator.geolocation) { setCaptureStatus('GPS is not available in this browser.'); return; } document.querySelector('#capture-start').disabled=true; capture.startedAt=Date.now(); capture.timer=setInterval(updateRunMetrics,1000); capture.watchId=navigator.geolocation.watchPosition(position => { const point={latitude:position.coords.latitude,longitude:position.coords.longitude,timestamp:new Date(position.timestamp).toISOString()}; capture.points.push(point); if(capture.points.length>1) capture.distance+=distanceBetween(capture.points[capture.points.length-2],point); const latLng=[position.coords.latitude,position.coords.longitude]; capture.line.addLatLng(latLng); if(!capture.marker) capture.marker=L.circleMarker(latLng,{radius:8,color:'#0f2744',weight:3,fillColor:'#ef233c',fillOpacity:1}).addTo(capture.map); else capture.marker.setLatLng(latLng); if(capture.points.length===1) capture.map.setView(latLng,16); else capture.map.panTo(latLng); updateRunMetrics(); document.querySelector('#gps-state').textContent='Tracking'; document.querySelector('#capture-submit').disabled=false; setCaptureStatus('Recording live route… press Stop when finished.'); }, error => setCaptureStatus(`GPS error: ${error.message}`), {enableHighAccuracy:true,maximumAge:0}); }
+    function updateRunMetrics() { const seconds=Math.max(0,Math.floor((Date.now()-capture.startedAt)/1000)); const minutes=Math.floor(seconds/60); const distanceKm=capture.distance/1000; document.querySelector('#gps-distance').textContent=`${distanceKm.toFixed(2)} km`; document.querySelector('#gps-time').textContent=`${String(minutes).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`; document.querySelector('#gps-pace').textContent=distanceKm>0?`${Math.floor(seconds/60/distanceKm)}:${String(Math.floor(seconds/distanceKm)%60).padStart(2,'0')} / km`:'--:-- / km'; }
+    function distanceBetween(a,b) { const radius=6371000; const rad=value=>value*Math.PI/180; const x=rad(b.latitude-a.latitude); const y=rad(b.longitude-a.longitude); const q=Math.sin(x/2)**2+Math.cos(rad(a.latitude))*Math.cos(rad(b.latitude))*Math.sin(y/2)**2; return 2*radius*Math.atan2(Math.sqrt(q),Math.sqrt(1-q)); }
+    async function recordProof() { if (!capture.stream) await prepareCamera(); capture.chunks=[]; capture.startedAt=Date.now(); capture.recorder=new MediaRecorder(capture.stream,{mimeType:'video/webm'}); capture.recorder.ondataavailable=event=>{if(event.data.size) capture.chunks.push(event.data);}; capture.recorder.onstop=submitVideoProof; capture.recorder.start(); document.querySelector('#capture-start').disabled=true; let remaining=5; setCaptureStatus(`Recording proof… ${remaining}s`); const timer=setInterval(()=>{ remaining-=1; setCaptureStatus(remaining>0?`Recording proof… ${remaining}s`:'Uploading proof…'); if(remaining<=0) clearInterval(timer); },1000); setTimeout(()=>capture.recorder?.stop(),5000); }
+    async function refreshProfile() { if(window.location.protocol==='file:') return; const response=await fetch('/api/me',{headers:{'x-user-id':'demo-user'}}); if(!response.ok) return; const profile=await response.json(); const gold=document.querySelector('#gold-balance'); if(gold) gold.textContent=`● ${profile.gold.toLocaleString()} G`; const level=document.querySelector('.level'); if(level) level.textContent=`LEVEL ${profile.level}`; }
+    async function submitVideoProof() { const blob=new Blob(capture.chunks,{type:'video/webm'}); const body=new FormData(); body.append('video',blob,'routine-proof.webm'); body.append('durationMs',String(Date.now()-capture.startedAt)); if(capture.quest.evidence==='study'){body.append('subject',document.querySelector('#study-subject').value);body.append('summary',document.querySelector('#study-summary').value);} try { const response=await fetch(`/api/completions/${capture.completionId}/video`,{method:'POST',headers:{'x-user-id':'demo-user'},body}); if(!response.ok) throw new Error((await response.json()).error||'Proof was rejected'); setCaptureStatus('Verified. XP and Gold awarded.'); await refreshProfile(); document.querySelector('#capture-submit').disabled=false; } catch(error) { setCaptureStatus(error.message||'Upload failed.'); document.querySelector('#capture-start').disabled=false; } }
+    async function submitGpsProof() { if(capture.watchId!==null) navigator.geolocation.clearWatch(capture.watchId); if(capture.timer) clearInterval(capture.timer); capture.watchId=null; capture.timer=null; setCaptureStatus('Checking route…'); try { const response=await fetch(`/api/completions/${capture.completionId}/gps`,{method:'POST',headers:{'content-type':'application/json','x-user-id':'demo-user'},body:JSON.stringify({points:capture.points})}); if(!response.ok) throw new Error((await response.json()).error||'GPS route was rejected'); setCaptureStatus('Route verified. XP and Gold awarded.'); await refreshProfile(); document.querySelector('#capture-submit').disabled=true; } catch(error) { setCaptureStatus(error.message||'GPS upload failed.'); document.querySelector('#capture-submit').disabled=false; } }
+    document.querySelector('#capture-start').addEventListener('click',()=>capture.quest?.evidence==='gps'?startGpsTracking():recordProof());
+    document.querySelector('#capture-submit').addEventListener('click',()=>capture.quest?.evidence==='gps'?submitGpsProof():closeCapture());
+    document.querySelector('#capture-close').addEventListener('click',closeCapture);
+    document.querySelector('#strava-connect').addEventListener('click',async()=>{try{const response=await fetch('/api/integrations/strava/connect',{headers:{'x-user-id':'demo-user'}});const data=await response.json();if(!response.ok)throw new Error(data.error);window.open(data.authorizeUrl,'_blank','noopener');setCaptureStatus('Strava opened in a new tab. Connect, then submit your activity.');}catch(error){setCaptureStatus(error.message||'Strava is not configured yet.');}});
+    document.addEventListener('click', event => { const nav = event.target.closest('[data-screen]'); if (nav) showScreen(nav.dataset.screen); const action = event.target.closest('.quest-action'); if (action) { const quest = quests[Number(action.dataset.index)]; openRoutine(quest,action).catch(error=>{action.textContent=error.message||'Unable to start';}); } });
+    document.querySelectorAll('.filter').forEach(filter => filter.addEventListener('click', () => { document.querySelectorAll('.filter').forEach(item=>item.classList.remove('active')); filter.classList.add('active'); const key=filter.dataset.filter; document.querySelectorAll('#quest-list .quest').forEach(item=>item.hidden=key!=='all'&&item.dataset.type!==key); }));
+    document.querySelector('#raid-btn').addEventListener('click', event => { event.currentTarget.textContent='Raid engaged • 3h 20m logged'; event.currentTarget.disabled=true; });
+    document.querySelector('#journey-resume').addEventListener('click', event => { event.currentTarget.textContent='Quest active • timer ready'; event.currentTarget.disabled=true; });
+    document.querySelector('#match-btn').addEventListener('click', event => { event.currentTarget.textContent='Match found • +1 momentum'; event.currentTarget.disabled=true; });
+    document.querySelector('#share-btn').addEventListener('click', event => { event.currentTarget.textContent='Recap link copied'; });
+  </script>
+</body>
+</html>

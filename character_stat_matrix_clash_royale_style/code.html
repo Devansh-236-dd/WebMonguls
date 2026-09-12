@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>Life RPG - Clash Royale Edition</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800;900&amp;family=Space+Grotesk:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>
+  @layer base {
+    html, body {
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      font-family: 'Rubik', 'Space Grotesk', system-ui, sans-serif;
+    }
+    body {
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%) fixed;
+    }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+  }
+  ::-webkit-scrollbar { display: none; }
+  .clash-shadow-btn {
+    box-shadow: 0 5px 0 #b45309, 0 8px 12px rgba(0,0,0,0.3);
+  }
+  .clash-shadow-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #b45309, 0 3px 6px rgba(0,0,0,0.25);
+  }
+  .clash-shadow-green {
+    box-shadow: 0 4px 0 #15803d, 0 6px 10px rgba(0,0,0,0.25);
+  }
+  .clash-shadow-green:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #15803d, 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .clash-shadow-blue {
+    box-shadow: 0 4px 0 #1e3a8a, 0 6px 10px rgba(0,0,0,0.25);
+  }
+  .clash-shadow-blue:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1e3a8a, 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .clash-border {
+    border: 3.5px solid #0f2744;
+  }
+  .clash-card-shadow {
+    box-shadow: 0 6px 0 #0f2744, 0 12px 24px rgba(15, 39, 68, 0.35);
+  }
+  .clash-inner-bevel {
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
+  .text-stroke-sm {
+    text-shadow: -1.5px -1.5px 0 #0f2744, 1.5px -1.5px 0 #0f2744, -1.5px 1.5px 0 #0f2744, 1.5px 1.5px 0 #0f2744, 0 2.5px 0 #071728;
+  }
+  .text-stroke-gold {
+    text-shadow: -1.5px -1.5px 0 #78350f, 1.5px -1.5px 0 #78350f, -1.5px 1.5px 0 #78350f, 1.5px 1.5px 0 #78350f, 0 2.5px 0 #451a03;
+  }
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        clashDark: "#0f2744",
+        clashNavy: "#1e3a8a",
+        clashGold: "#f59e0b",
+        clashGreen: "#22c55e"
+      }
+    }
+  }
+}</script></head><body class="text-[#0f2744] flex flex-col min-h-screen relative select-none antialiased">
+<!-- Ambient Sky Clouds & Arenas Motif -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-40">
+<div class="absolute -top-12 -left-20 w-80 h-40 bg-white rounded-full blur-2xl"></div>
+<div class="absolute top-48 -right-24 w-96 h-48 bg-sky-100 rounded-full blur-2xl"></div>
+<div class="absolute top-[480px] -left-20 w-72 h-36 bg-white/70 rounded-full blur-xl"></div>
+</div>
+<!-- TOP HEADER BAR (Clash Royale Style Crown/Arena HUD) -->
+<header class="fixed top-0 w-full z-50 pt-safe bg-[#0284c7] clash-border border-t-0 border-x-0 shadow-[0_4px_0_#0f2744,0_8px_16px_rgba(0,0,0,0.3)]">
+<div class="px-3 py-2 flex flex-col gap-1.5 bg-gradient-to-b from-[#38bdf8] to-[#0284c7]">
+<!-- Upper HUD: Level Badge, Player, Currency -->
+<div class="flex items-center justify-between gap-2">
+<!-- Player Profile & Crown Level -->
+<div class="flex items-center gap-2">
+<div class="relative shrink-0 flex items-center justify-center">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-600 border-[3px] border-[#0f2744] shadow-[0_3px_0_#0f2744] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[24px] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">person</span>
+</div>
+<!-- Clash Royale Level Badge Hexagon / Shield -->
+<div class="absolute -bottom-1 -right-1 bg-gradient-to-b from-blue-500 to-blue-700 text-white font-black text-[11px] px-1.5 py-0.5 rounded-md border-2 border-[#0f2744] shadow-[0_1.5px_0_#0f2744]">
+            17
+          </div>
+</div>
+<div class="flex flex-col leading-tight">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[15px] text-white tracking-wide uppercase text-stroke-sm">KENNETH</span>
+<span class="bg-gradient-to-b from-amber-300 to-amber-500 text-[#451a03] font-black text-[9px] px-1.5 py-0.5 rounded border-2 border-[#78350f] shadow-[0_1px_0_#451a03] uppercase tracking-wider">ROYAL III</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-black text-amber-200 drop-shadow">
+<span class="material-symbols-outlined text-[14px] text-amber-300">emoji_events</span>
+<span>6,840 Trophies</span>
+</div>
+</div>
+</div>
+<!-- Currency Ribbons (Gold & Gems) -->
+<div class="flex items-center gap-1.5">
+<!-- Gold -->
+<div class="flex items-center gap-1 bg-[#0f2744]/90 border-2 border-amber-400 px-2.5 py-0.5 rounded-full shadow-[0_2px_0_#071728] clash-inner-bevel">
+<span class="material-symbols-outlined text-amber-400 text-[16px] drop-shadow">monetization_on</span>
+<span class="font-black text-[13px] text-amber-300 tracking-wide">1,250</span>
+</div>
+<!-- Gems -->
+<div class="flex items-center gap-1 bg-[#0f2744]/90 border-2 border-emerald-400 px-2 py-0.5 rounded-full shadow-[0_2px_0_#071728] clash-inner-bevel">
+<span class="material-symbols-outlined text-emerald-400 text-[16px] drop-shadow">diamond</span>
+<span class="font-black text-[13px] text-emerald-300 tracking-wide">142</span>
+</div>
+</div>
+</div>
+<!-- Lower Banner strip -->
+<div class="flex items-center justify-between pt-1 border-t-2 border-sky-300/40">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-amber-300 text-[18px]">military_tech</span>
+<span class="font-black text-[13px] text-white tracking-wide uppercase text-stroke-sm">HERO CARD INSPECTION</span>
+</div>
+<div class="flex items-center gap-1.5 bg-[#0f2744]/80 border-2 border-sky-300/70 px-2 py-0.5 rounded-full">
+<div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+<span class="font-black text-[9px] text-sky-200 uppercase tracking-wider">BATTLE READY</span>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT AREA -->
+<main class="relative z-10 flex flex-col w-full pt-28 pb-28 px-3.5 space-y-3.5 max-w-md mx-auto">
+<!-- 12-DAY STREAK POWER MODULE (Weekly Day Nodes + Chunky Golden ALLOCATE Button) -->
+<div class="relative rounded-3xl p-3.5 clash-border clash-card-shadow overflow-hidden bg-gradient-to-b from-[#fef08a] via-[#f59e0b] to-[#d97706]">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-b from-amber-200 to-amber-500 border-2 border-[#78350f] shadow-[0_2px_0_#451a03] flex items-center justify-center text-[#78350f]">
+<span class="material-symbols-outlined text-[24px] font-black animate-bounce text-white drop-shadow-[0_1px_2px_#78350f]">local_fire_department</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[15px] text-white tracking-wide uppercase text-stroke-gold">12-DAY STREAK POWER</span>
+<span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+</div>
+<span class="font-bold text-[11px] text-[#451a03]">Stat Resonance Boost Unlocked (+3 AP Surge)</span>
+</div>
+</div>
+</div>
+<!-- Weekly 7-Day Matrix Nodes (Mon-Sun) -->
+<div class="bg-[#78350f]/20 border-2 border-[#78350f]/40 rounded-2xl p-2 mb-3">
+<div class="grid grid-cols-7 gap-1 text-center">
+<!-- Mon -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-[#451a03] uppercase">M</span>
+<div class="w-7 h-7 rounded-lg bg-emerald-500 border-2 border-[#0f2744] shadow-[0_2px_0_#0f2744] flex items-center justify-center text-white mt-0.5">
+<span class="material-symbols-outlined text-[16px] font-black">check</span>
+</div>
+</div>
+<!-- Tue -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-[#451a03] uppercase">T</span>
+<div class="w-7 h-7 rounded-lg bg-emerald-500 border-2 border-[#0f2744] shadow-[0_2px_0_#0f2744] flex items-center justify-center text-white mt-0.5">
+<span class="material-symbols-outlined text-[16px] font-black">check</span>
+</div>
+</div>
+<!-- Wed -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-[#451a03] uppercase">W</span>
+<div class="w-7 h-7 rounded-lg bg-emerald-500 border-2 border-[#0f2744] shadow-[0_2px_0_#0f2744] flex items-center justify-center text-white mt-0.5">
+<span class="material-symbols-outlined text-[16px] font-black">check</span>
+</div>
+</div>
+<!-- Thu -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-[#451a03] uppercase">T</span>
+<div class="w-7 h-7 rounded-lg bg-emerald-500 border-2 border-[#0f2744] shadow-[0_2px_0_#0f2744] flex items-center justify-center text-white mt-0.5">
+<span class="material-symbols-outlined text-[16px] font-black">check</span>
+</div>
+</div>
+<!-- Fri -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-[#451a03] uppercase">F</span>
+<div class="w-7 h-7 rounded-lg bg-emerald-500 border-2 border-[#0f2744] shadow-[0_2px_0_#0f2744] flex items-center justify-center text-white mt-0.5">
+<span class="material-symbols-outlined text-[16px] font-black">check</span>
+</div>
+</div>
+<!-- Sat (Today - highlighted glowing) -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-amber-950 uppercase font-black">S</span>
+<div class="w-7 h-7 rounded-lg bg-gradient-to-b from-amber-200 to-amber-400 border-2 border-[#78350f] shadow-[0_2px_0_#451a03] flex items-center justify-center text-[#78350f] mt-0.5 ring-2 ring-white">
+<span class="material-symbols-outlined text-[18px] font-black animate-spin">bolt</span>
+</div>
+</div>
+<!-- Sun (Locked) -->
+<div class="flex flex-col items-center">
+<span class="text-[9px] font-black text-[#451a03]/60 uppercase">S</span>
+<div class="w-7 h-7 rounded-lg bg-black/20 border-2 border-[#78350f]/40 flex items-center justify-center text-[#451a03]/50 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Bar inside Streak Banner: Chunky Golden ALLOCATE Button -->
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 text-[#451a03] font-black text-[12px]">
+<span class="material-symbols-outlined text-[18px]">electric_bolt</span>
+<span>RESONANCE AP READY</span>
+</div>
+<button class="clash-shadow-btn bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 hover:from-amber-200 hover:to-amber-400 text-[#451a03] font-black text-[13px] px-4 py-2 rounded-2xl border-[3px] border-[#78350f] uppercase tracking-wider flex items-center gap-1.5 transition-all" id="allocateBtn">
+<span>ALLOCATE (+3 AP)</span>
+<span class="material-symbols-outlined text-[18px] text-white drop-shadow-[0_1px_1px_#78350f]">bolt</span>
+</button>
+</div>
+</div>
+<!-- CLASH ROYALE LEGENDARY HERO CARD: KENNETH -->
+<div class="relative rounded-3xl p-4 clash-border clash-card-shadow overflow-hidden bg-gradient-to-b from-white via-sky-50 to-[#bae6fd]">
+<!-- Top Card Header: Legendary Ribbons -->
+<div class="w-full flex items-center justify-between font-black text-[11px] tracking-wider uppercase mb-3">
+<div class="flex items-center gap-1 bg-gradient-to-b from-[#1e3a8a] to-[#0f2744] text-sky-200 px-3 py-1 rounded-full border-2 border-[#0f2744] shadow-[0_2px_0_#071728]">
+<span class="material-symbols-outlined text-[14px] text-amber-300">shield</span>
+<span>LEGENDARY HERO</span>
+</div>
+<div class="flex items-center gap-1 bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 text-[#451a03] px-3 py-1 rounded-full border-2 border-[#78350f] shadow-[0_2px_0_#451a03]">
+<span class="material-symbols-outlined text-[15px]">local_fire_department</span>
+<span>SOLAR 94.2%</span>
+</div>
+</div>
+<!-- Clash Royale Card Portrait Frame -->
+<div class="relative my-2 flex flex-col items-center">
+<!-- Glow Aura -->
+<div class="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-amber-400 via-sky-400 to-purple-500 opacity-60 blur-md animate-pulse"></div>
+<!-- Physical Card Shield / Frame -->
+<div class="relative w-44 h-56 rounded-2xl overflow-hidden clash-border shadow-[0_6px_0_#0f2744,0_10px_20px_rgba(0,0,0,0.3)] bg-gradient-to-b from-sky-300 to-blue-600">
+<!-- Level Badge Top Left -->
+<div class="absolute top-1.5 left-1.5 z-20 bg-gradient-to-b from-amber-300 to-amber-500 text-[#451a03] font-black text-[11px] px-2 py-0.5 rounded-lg border-2 border-[#78350f] shadow-[0_2px_0_#451a03]">
+          LV 17
+        </div>
+<!-- Elixir Cost Top Right -->
+<div class="absolute top-1.5 right-1.5 z-20 w-7 h-7 rounded-full bg-gradient-to-b from-purple-500 to-purple-800 border-2 border-white flex items-center justify-center shadow-[0_2px_0_#3b0764]">
+<span class="text-[12px] font-black text-white drop-shadow">5</span>
+</div>
+<!-- Hero Portrait -->
+<img class="w-full h-full object-cover" data-alt="Dynamic close-up portrait of Kenneth, a charismatic anime e-sports champion and game hero with sharp silver hair, radiant cyan eyes, and futuristic high-collar porcelain white gaming armor. Golden solar telemetry accents and crystalline energy halos frame his confident expression in pristine studio daylight illumination." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHiwixMuotbeoMJEJ5lm3DqwExEBE39ma3XHW9MBYJhbXFDtdDBCuoDRU6sN9uv2-EKBRJ-R8VGCp6n-YxKwwdMsKTSVnQ6ZH7FJRxuXj_UgsuaKT-ndODozvC5SiZj1SSObjG4qp7DuOyAQwM8kGcBDP1NC0TufNKYkOmgU24WfrxMC-0zFB0N_zXNE5RuJchiuwIbMaEnRTfu0WNDAQqv50kxfAnI8Qy7Skh0nTNqNVcoAUFaZ1tWg"/>
+<!-- Card Bottom Stars -->
+<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0f2744] via-[#0f2744]/70 to-transparent p-1 pt-4 text-center">
+<span class="font-black text-[11px] text-amber-300 tracking-wider drop-shadow">★ ★ ★ ★ ★</span>
+</div>
+</div>
+<!-- Rank Ribbon Overlay -->
+<div class="relative -mt-3.5 z-20 bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 text-[#451a03] px-4 py-1 rounded-2xl border-2 border-[#78350f] shadow-[0_3px_0_#451a03] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[17px] text-white drop-shadow-[0_1px_1px_#78350f]">military_tech</span>
+<span class="font-black text-[12px] tracking-wider uppercase text-white text-stroke-gold">RANK III CHAMPION</span>
+</div>
+</div>
+<!-- Hero Title & Identity -->
+<div class="mt-3 flex flex-col items-center text-center">
+<h2 class="font-black text-[23px] text-[#0f2744] uppercase tracking-tight text-stroke-sm text-white">THE SYSTEM BREAKER</h2>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-black text-[11px] bg-gradient-to-b from-blue-500 to-blue-700 text-white px-2.5 py-0.5 rounded-lg border-2 border-[#0f2744] shadow-[0_1.5px_0_#0f2744] uppercase">VANGUARD CASTER</span>
+<span class="font-black text-[12px] text-sky-900">Target: Ground &amp; Air</span>
+</div>
+</div>
+<!-- Clash Royale Elixir/XP Advance Bar -->
+<div class="w-full mt-3.5 bg-gradient-to-b from-sky-100 to-sky-200 rounded-2xl p-3 border-2 border-sky-400/80 shadow-inner">
+<div class="flex items-center justify-between font-black text-[11px] mb-1.5">
+<span class="uppercase text-[#0f2744] tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-purple-600">science</span>
+          HERO ADVANCE (LEVEL 18)
+        </span>
+<span class="text-[#0f2744] font-black">3,810 / 4,000 XP</span>
+</div>
+<!-- Candy Progress Bar with glossy reflection -->
+<div class="relative w-full h-4 bg-[#0f2744]/25 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner">
+<div class="h-full rounded-full transition-all duration-500" style="width: 95.2%; background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #f43f5e 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+<div class="flex justify-between items-center mt-2 font-black text-[11px]">
+<span class="text-sky-900 font-extrabold">+190 XP to Stat Genesis</span>
+<span class="text-purple-900 uppercase bg-purple-200 border-2 border-purple-400 px-2.5 py-0.5 rounded-full shadow-[0_1px_0_#581c87]">NEXT: AP +2 ⚡</span>
+</div>
+</div>
+</div>
+<!-- HEXA STAT MATRIX: Deep Battle Attributes -->
+<div class="flex items-center justify-between pt-2 px-1">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center text-white border-2 border-[#0f2744] shadow-[0_2px_0_#0f2744]">
+<span class="material-symbols-outlined text-[20px]">swords</span>
+</div>
+<h3 class="font-black text-[18px] text-white tracking-tight uppercase text-stroke-sm">BATTLE ATTRIBUTES</h3>
+</div>
+<span class="font-black text-[10px] bg-sky-200 text-[#0f2744] border-2 border-[#0f2744] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-[0_1.5px_0_#0f2744]">6 MATRIX STATS</span>
+</div>
+<!-- Stat Cards Grid (Candy-colored Clash bars & chunky frames) -->
+<div class="grid grid-cols-1 gap-3">
+<!-- 1. INTELLECT (Dominant 81/100) -->
+<div class="rounded-2xl p-3.5 clash-border clash-card-shadow bg-gradient-to-b from-white to-sky-50 flex flex-col">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-b from-cyan-400 to-blue-600 text-white flex items-center justify-center border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">
+<span class="material-symbols-outlined text-[24px] drop-shadow">psychology</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[16px] text-[#0f2744] uppercase">INTELLECT</span>
+<span class="font-black text-[9px] px-2 py-0.5 rounded-md bg-blue-500 text-white border border-[#0f2744] uppercase shadow-sm">DOMINANT</span>
+</div>
+<span class="font-bold text-[11px] text-sky-900">Spell power &amp; cognitive synthesis</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-black text-[26px] text-blue-600 leading-none drop-shadow">81</span>
+<span class="font-black text-[10px] text-slate-500 block">/ 100</span>
+</div>
+</div>
+<!-- Candy bar -->
+<div class="w-full mt-2.5">
+<div class="w-full h-3.5 bg-slate-200 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner relative">
+<div class="h-full rounded-full" style="width: 81%; background: linear-gradient(90deg, #38bdf8 0%, #2563eb 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+</div>
+<!-- Activity chips -->
+<div class="mt-2.5 pt-1 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 bg-sky-100 border border-sky-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-blue-600">terminal</span> Coding (42h)
+        </span>
+<span class="inline-flex items-center gap-1 bg-sky-100 border border-sky-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-blue-600">menu_book</span> Tech Reading (18h)
+        </span>
+</div>
+</div>
+<!-- 2. DISCIPLINE (Stable 73/100) -->
+<div class="rounded-2xl p-3.5 clash-border clash-card-shadow bg-gradient-to-b from-white to-purple-50 flex flex-col">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-b from-purple-400 to-purple-700 text-white flex items-center justify-center border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">
+<span class="material-symbols-outlined text-[24px] drop-shadow">timer</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[16px] text-[#0f2744] uppercase">DISCIPLINE</span>
+<span class="font-black text-[9px] px-2 py-0.5 rounded-md bg-purple-500 text-white border border-[#0f2744] uppercase shadow-sm">STABLE</span>
+</div>
+<span class="font-bold text-[11px] text-purple-950">Elixir recharge &amp; focus shield</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-black text-[26px] text-purple-600 leading-none drop-shadow">73</span>
+<span class="font-black text-[10px] text-slate-500 block">/ 100</span>
+</div>
+</div>
+<div class="w-full mt-2.5">
+<div class="w-full h-3.5 bg-slate-200 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner relative">
+<div class="h-full rounded-full" style="width: 73%; background: linear-gradient(90deg, #c084fc 0%, #7e22ce 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+</div>
+<div class="mt-2.5 pt-1 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 bg-purple-100 border border-purple-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-purple-600">self_improvement</span> Deep Work (28 blks)
+        </span>
+<span class="inline-flex items-center gap-1 bg-purple-100 border border-purple-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-purple-600">wb_sunny</span> Morning Rituals
+        </span>
+</div>
+</div>
+<!-- 3. STRATEGY (Tactical 68/100) -->
+<div class="rounded-2xl p-3.5 clash-border clash-card-shadow bg-gradient-to-b from-white to-teal-50 flex flex-col">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-b from-teal-400 to-teal-700 text-white flex items-center justify-center border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">
+<span class="material-symbols-outlined text-[24px] drop-shadow">chess</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[16px] text-[#0f2744] uppercase">STRATEGY</span>
+<span class="font-black text-[9px] px-2 py-0.5 rounded-md bg-teal-500 text-white border border-[#0f2744] uppercase shadow-sm">TACTICAL</span>
+</div>
+<span class="font-bold text-[11px] text-teal-950">Arena decision trees &amp; timing</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-black text-[26px] text-teal-600 leading-none drop-shadow">68</span>
+<span class="font-black text-[10px] text-slate-500 block">/ 100</span>
+</div>
+</div>
+<div class="w-full mt-2.5">
+<div class="w-full h-3.5 bg-slate-200 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner relative">
+<div class="h-full rounded-full" style="width: 68%; background: linear-gradient(90deg, #2dd4bf 0%, #0f766e 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+</div>
+<div class="mt-2.5 pt-1 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 bg-teal-100 border border-teal-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-teal-600">extension</span> 140 Chess Puzzles
+        </span>
+<span class="inline-flex items-center gap-1 bg-teal-100 border border-teal-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-teal-600">schema</span> System Architecture
+        </span>
+</div>
+</div>
+<!-- 4. STRENGTH (Solid 62/100) -->
+<div class="rounded-2xl p-3.5 clash-border clash-card-shadow bg-gradient-to-b from-white to-amber-50 flex flex-col">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-b from-amber-400 to-amber-700 text-white flex items-center justify-center border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">
+<span class="material-symbols-outlined text-[24px] drop-shadow">fitness_center</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[16px] text-[#0f2744] uppercase">STRENGTH</span>
+<span class="font-black text-[9px] px-2 py-0.5 rounded-md bg-amber-500 text-white border border-[#0f2744] uppercase shadow-sm">SOLID</span>
+</div>
+<span class="font-bold text-[11px] text-amber-950">Physical damage &amp; knockback</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-black text-[26px] text-amber-600 leading-none drop-shadow">62</span>
+<span class="font-black text-[10px] text-slate-500 block">/ 100</span>
+</div>
+</div>
+<div class="w-full mt-2.5">
+<div class="w-full h-3.5 bg-slate-200 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner relative">
+<div class="h-full rounded-full" style="width: 62%; background: linear-gradient(90deg, #fbbf24 0%, #b45309 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+</div>
+<div class="mt-2.5 pt-1 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-amber-700">sports_gymnastics</span> Resistance Training
+        </span>
+<span class="inline-flex items-center gap-1 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-amber-700">weight</span> Heavy Squat
+        </span>
+</div>
+</div>
+<!-- 5. ENDURANCE (Active 54/100) -->
+<div class="rounded-2xl p-3.5 clash-border clash-card-shadow bg-gradient-to-b from-white to-blue-50 flex flex-col">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-b from-sky-400 to-blue-600 text-white flex items-center justify-center border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">
+<span class="material-symbols-outlined text-[24px] drop-shadow">sprint</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[16px] text-[#0f2744] uppercase">ENDURANCE</span>
+<span class="font-black text-[9px] px-2 py-0.5 rounded-md bg-blue-500 text-white border border-[#0f2744] uppercase shadow-sm">ACTIVE</span>
+</div>
+<span class="font-bold text-[11px] text-blue-950">Hit points &amp; damage absorption</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-black text-[26px] text-sky-600 leading-none drop-shadow">54</span>
+<span class="font-black text-[10px] text-slate-500 block">/ 100</span>
+</div>
+</div>
+<div class="w-full mt-2.5">
+<div class="w-full h-3.5 bg-slate-200 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner relative">
+<div class="h-full rounded-full" style="width: 54%; background: linear-gradient(90deg, #60a5fa 0%, #1d4ed8 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+</div>
+<div class="mt-2.5 pt-1 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 bg-sky-100 border border-sky-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-blue-600">directions_run</span> 5K Trail Runs
+        </span>
+<span class="inline-flex items-center gap-1 bg-sky-100 border border-sky-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-blue-600">pool</span> Laps &amp; Drills
+        </span>
+</div>
+</div>
+<!-- 6. CREATIVITY (Needs Focus 41/100) -->
+<div class="rounded-2xl p-3.5 clash-border clash-card-shadow bg-gradient-to-b from-white to-rose-50 flex flex-col">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-b from-rose-400 to-rose-700 text-white flex items-center justify-center border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">
+<span class="material-symbols-outlined text-[24px] drop-shadow">palette</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-black text-[16px] text-[#0f2744] uppercase">CREATIVITY</span>
+<span class="font-black text-[9px] px-2 py-0.5 rounded-md bg-rose-500 text-white border border-[#0f2744] uppercase shadow-sm">NEEDS ATTN</span>
+</div>
+<span class="font-bold text-[11px] text-rose-950">Tactical bluff &amp; innovative plays</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-black text-[26px] text-rose-600 leading-none drop-shadow">41</span>
+<span class="font-black text-[10px] text-slate-500 block">/ 100</span>
+</div>
+</div>
+<div class="w-full mt-2.5">
+<div class="w-full h-3.5 bg-slate-200 rounded-full border-2 border-[#0f2744] overflow-hidden shadow-inner relative">
+<div class="h-full rounded-full" style="width: 41%; background: linear-gradient(90deg, #fb7185 0%, #e11d48 100%);"></div>
+<div class="absolute inset-0 bg-white/30 rounded-full pointer-events-none" style="height: 45%;"></div>
+</div>
+</div>
+<div class="mt-2.5 pt-1 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-rose-600">draw</span> UI Wireframing
+        </span>
+<span class="inline-flex items-center gap-1 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded-lg font-black text-[11px] text-[#0f2744]">
+<span class="material-symbols-outlined text-[13px] text-rose-600">edit_note</span> Lore Writing
+        </span>
+</div>
+</div>
+</div>
+<!-- COSMETIC LOADOUT COLLECTION (Clash Royale Card Deck Grid) -->
+<div class="rounded-3xl bg-gradient-to-b from-white via-sky-50 to-[#bae6fd] p-4 flex flex-col space-y-3 clash-border clash-card-shadow">
+<div class="flex items-center justify-between">
+<span class="font-black text-[17px] text-[#0f2744] uppercase tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-[22px]">style</span> CARD COLLECTION
+      </span>
+<span class="font-black text-[10px] bg-gradient-to-r from-amber-300 to-amber-500 text-[#451a03] px-2.5 py-0.5 rounded-full border-2 border-[#78350f] shadow-[0_1.5px_0_#451a03]">DECK 1 / 5</span>
+</div>
+<!-- Filter Tabs (Chunky Clash Royale pill buttons) -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="cosmeticTabs">
+<button class="px-3.5 py-1.5 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 text-white font-black text-[11px] uppercase tracking-wider shrink-0 border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]">Avatars (4)</button>
+<button class="px-3.5 py-1.5 rounded-xl bg-white text-slate-700 font-black text-[11px] uppercase tracking-wider shrink-0 border-2 border-slate-300 shadow-[0_2.5px_0_#94a3b8]">Frames (6)</button>
+<button class="px-3.5 py-1.5 rounded-xl bg-white text-slate-700 font-black text-[11px] uppercase tracking-wider shrink-0 border-2 border-slate-300 shadow-[0_2.5px_0_#94a3b8]">Titles (3)</button>
+<button class="px-3.5 py-1.5 rounded-xl bg-white text-slate-700 font-black text-[11px] uppercase tracking-wider shrink-0 border-2 border-slate-300 shadow-[0_2.5px_0_#94a3b8]">Auras (2)</button>
+</div>
+<!-- Card Deck Grid -->
+<div class="grid grid-cols-2 gap-3 pt-1" id="cosmeticsGrid">
+<!-- Card 1: Legendary (Equipped) -->
+<div class="relative rounded-2xl p-2.5 flex flex-col items-center text-center clash-border shadow-[0_4px_0_#0f2744,0_6px_10px_rgba(0,0,0,0.15)] bg-gradient-to-b from-amber-100 to-amber-200">
+<div class="absolute -top-2.5 left-2 bg-gradient-to-r from-amber-400 to-amber-500 text-[#451a03] font-black text-[9px] px-2 py-0.5 rounded-md border-2 border-[#78350f] uppercase shadow-[0_1.5px_0_#451a03]">LEGENDARY</div>
+<div class="absolute top-1.5 right-1.5 text-emerald-600 bg-white rounded-full p-0.5 border border-emerald-500 shadow">
+<span class="material-symbols-outlined text-[16px] block">verified</span>
+</div>
+<div class="w-18 h-22 rounded-xl overflow-hidden mt-2 mb-1.5 bg-sky-200 border-2 border-[#78350f] shadow-md">
+<img class="w-full h-full object-cover" data-alt="Anime hero avatar icon with radiant solar hair, cyber monocle, and glowing gold accents against an icy white studio backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdADl-876YNsDIOOe-8YzWtUeGe08fvX1u7Nqvra85-K7NEas0s5us13WPZqkZ-bN5ZyGcaODzsLJcUP744d9ifXiKVY88Usvi1h-iqbnd0TaT3IEWcVtekW54_xGSVePcRF_UzvPWnJFVNvUhLV7ECNiP6kVrkv2keURpl4NOWFTndGPF1Ou4GBT4TCwn5EdSzr4svYTduNCIgAA-ZP88w75KMHJKHMejVKIyUjKPZwXGxLrgEdREkQ"/>
+</div>
+<span class="font-black text-[12px] text-[#0f2744] uppercase truncate w-full">Solar Vanguard</span>
+<!-- Chunky Green EQUIPPED button -->
+<div class="mt-1 w-full py-1.5 rounded-xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black text-[10px] uppercase tracking-wider border-2 border-[#14532d] shadow-[0_2.5px_0_#14532d] flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+<span>EQUIPPED</span>
+</div>
+</div>
+<!-- Card 2: Epic -->
+<div class="relative rounded-2xl p-2.5 flex flex-col items-center text-center clash-border shadow-[0_4px_0_#0f2744,0_6px_10px_rgba(0,0,0,0.15)] bg-gradient-to-b from-purple-100 to-purple-200">
+<div class="absolute -top-2.5 left-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-black text-[9px] px-2 py-0.5 rounded-md border-2 border-[#3b0764] uppercase shadow-[0_1.5px_0_#3b0764]">EPIC</div>
+<div class="w-18 h-22 rounded-xl overflow-hidden mt-2 mb-1.5 bg-purple-200 border-2 border-[#581c87] shadow-md">
+<img class="w-full h-full object-cover" data-alt="Anime battle caster avatar icon wearing sleek deep amethyst visor armor with violet particle sparks and clean mechanical line design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfyzfChjkitUIlpjR5y9nPUZpfbicfGU4Nxh2-2hOkZPsDSD5uH1NKOhf7XOLFHEXseMiOtfmUKFxsh4CbBMLWeqYTJMBdXhksUnWkQvRu7jjWpKAo0SFUT77gK10xdEYKHDOVynhuDYCDgrIwdHdVVqaxo5Mbges8Twc2OMN9j5YwEcIoJZZU332RpFRLL1ANUmgxaKQ7iZlD96cRGMZQG-4X4EP4dhxIiMU8dxG4zQP3GGfBYEhMWQ"/>
+</div>
+<span class="font-black text-[12px] text-[#0f2744] uppercase truncate w-full">Void Synthesizer</span>
+<!-- Chunky Blue EQUIP button -->
+<button class="clash-shadow-blue mt-1 w-full py-1.5 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 text-white font-black text-[10px] uppercase tracking-wider border-2 border-[#0f2744] transition-all">
+          EQUIP
+        </button>
+</div>
+<!-- Card 3: Rare -->
+<div class="relative rounded-2xl p-2.5 flex flex-col items-center text-center clash-border shadow-[0_4px_0_#0f2744,0_6px_10px_rgba(0,0,0,0.15)] bg-gradient-to-b from-sky-100 to-sky-200">
+<div class="absolute -top-2.5 left-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-black text-[9px] px-2 py-0.5 rounded-md border-2 border-[#1e3a8a] uppercase shadow-[0_1.5px_0_#1e3a8a]">RARE</div>
+<div class="w-18 h-22 rounded-xl overflow-hidden mt-2 mb-1.5 bg-blue-200 border-2 border-[#1e3a8a] shadow-md">
+<img class="w-full h-full object-cover" data-alt="Anime speed runner avatar icon with azure athletic gear, crystalline spectacles, and kinetic light streaks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAtn9otFuZXDnuWzY_tmwuEi1xB86wROSLxGzHQvuMB3EUNfZpA6a9vV15t7SM555azmRbtV-mvmhN4-bc9wWeIO5Ax_AkE-mWzDybR6xWL8JHYurf8YPqOlG3AfxjoTk2coHVJbZmFeQk3v2YE308ihuMpdMSKoVKGWADxXiXm1tp8vurB0Kgu9pZKFpDibdDcnFn3Ryqvtez1bMCrFDEmBeqjHOBy0zmIYLC2aiIPxwyIj47WbTreg"/>
+</div>
+<span class="font-black text-[12px] text-[#0f2744] uppercase truncate w-full">Glacier Runner</span>
+<button class="clash-shadow-blue mt-1 w-full py-1.5 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 text-white font-black text-[10px] uppercase tracking-wider border-2 border-[#0f2744] transition-all">
+          EQUIP
+        </button>
+</div>
+<!-- Card 4: Common -->
+<div class="relative rounded-2xl p-2.5 flex flex-col items-center text-center clash-border shadow-[0_4px_0_#0f2744,0_6px_10px_rgba(0,0,0,0.15)] bg-gradient-to-b from-slate-100 to-slate-200">
+<div class="absolute -top-2.5 left-2 bg-gradient-to-r from-slate-400 to-slate-500 text-white font-black text-[9px] px-2 py-0.5 rounded-md border-2 border-[#475569] uppercase shadow-[0_1.5px_0_#475569]">COMMON</div>
+<div class="w-18 h-22 rounded-xl overflow-hidden mt-2 mb-1.5 bg-slate-200 border-2 border-[#475569] shadow-md">
+<img class="w-full h-full object-cover" data-alt="Anime novice trainee avatar icon in simple white high-collared sportswear with neutral calm expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKCFVI3WOOI1yxQQ9Npic9L8Dr7r7iawPJXwQEw9fpbElOA0N19O1KP8yCma3GoozB_oA4DfHIlSdLk4Shi32tkiMfAH40m5yoR49OgTJkzG43NJEPytAUrp_QKfrvl4OlKfPgk3U5LsUBOfT40wavJ5gXBmZhYBUxugDUCqUpa1R0-RoXbesIX0KH-kzry6_HiPdNzprcgAtme1JuWs3MhgLJVKY8rNj619R-nGyboSUNlbOMA1D4xA"/>
+</div>
+<span class="font-black text-[12px] text-[#0f2744] uppercase truncate w-full">Initiate Kenneth</span>
+<button class="clash-shadow-blue mt-1 w-full py-1.5 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 text-white font-black text-[10px] uppercase tracking-wider border-2 border-[#0f2744] transition-all">
+          EQUIP
+        </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BOTTOM GAME NAV BAR (Clash Royale Style Navigation) -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-gradient-to-b from-[#38bdf8] to-[#0284c7] clash-border border-b-0 border-x-0 shadow-[0_-4px_0_#0f2744,0_-8px_16px_rgba(0,0,0,0.25)]">
+<div class="relative flex items-center justify-around h-16 px-2">
+<!-- Shop -->
+<a class="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] text-white/80 hover:text-white transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined text-[24px] drop-shadow-[0_1.5px_0_#0f2744]">store</span>
+<span class="font-black text-[10px] uppercase tracking-wider text-stroke-sm">Shop</span>
+</a>
+<!-- Cards -->
+<a class="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] text-white/80 hover:text-white transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined text-[24px] drop-shadow-[0_1.5px_0_#0f2744]">view_carousel</span>
+<span class="font-black text-[10px] uppercase tracking-wider text-stroke-sm">Cards</span>
+</a>
+<!-- Center BATTLE Button (Big Chunky Yellow/Gold Sword Emblem) -->
+<div class="relative flex flex-col items-center justify-center -top-4">
+<a class="w-14 h-14 rounded-2xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-600 text-white flex items-center justify-center clash-border clash-shadow-btn transition-transform active:translate-y-1" href="#">
+<span class="material-symbols-outlined text-[32px] text-white drop-shadow-[0_2px_4px_#78350f]">swords</span>
+</a>
+<span class="font-black text-[10px] uppercase mt-1 text-amber-200 tracking-wider text-stroke-gold">Battle</span>
+</div>
+<!-- Hero (Active Selected) -->
+<a aria-current="page" class="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] text-amber-300 transition-transform" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-[24px] drop-shadow-[0_1.5px_0_#78350f]">shield</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+</div>
+<span class="font-black text-[10px] uppercase tracking-wider text-stroke-gold text-amber-300">Hero</span>
+</a>
+<!-- Clan -->
+<a class="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] text-white/80 hover:text-white transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined text-[24px] drop-shadow-[0_1.5px_0_#0f2744]">groups</span>
+<span class="font-black text-[10px] uppercase tracking-wider text-stroke-sm">Clan</span>
+</a>
+</div>
+</nav>
+<script>
+  // Simple interactive tabs
+  const cosmeticTabs = document.querySelectorAll('#cosmeticTabs button');
+  cosmeticTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      cosmeticTabs.forEach(t => {
+        t.className = "px-3.5 py-1.5 rounded-xl bg-white text-slate-700 font-black text-[11px] uppercase tracking-wider shrink-0 border-2 border-slate-300 shadow-[0_2.5px_0_#94a3b8]";
+      });
+      tab.className = "px-3.5 py-1.5 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 text-white font-black text-[11px] uppercase tracking-wider shrink-0 border-2 border-[#0f2744] shadow-[0_2.5px_0_#0f2744]";
+    });
+  });
+
+  // Chunky ALLOCATE button click animation
+  const allocateBtn = document.getElementById('allocateBtn');
+  if (allocateBtn) {
+    allocateBtn.addEventListener('click', () => {
+      allocateBtn.innerHTML = `<span>SURGING...</span><span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>`;
+      setTimeout(() => {
+        allocateBtn.innerHTML = `<span>CLAIMED!</span><span class="material-symbols-outlined text-[16px]">done_all</span>`;
+        allocateBtn.className = "clash-shadow-green bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black text-[13px] px-4 py-2 rounded-2xl border-[3px] border-[#14532d] uppercase tracking-wider flex items-center gap-1.5";
+      }, 700);
+    });
+  }
+</script>
+</body></html>
