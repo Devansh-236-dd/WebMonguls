@@ -7,7 +7,7 @@ import { verifyConnectedCompletion, verifyVideoCompletion } from './services/evi
 import { exchangeStravaCode, getStravaActivity, stravaAuthorizeUrl } from './services/strava-service.js';
 import { trackDistanceMeters, validateGpsTrack, TrackPoint } from './domain/gps.js';
 import { awardQuestRewards } from './services/reward-service.js';
-import { demoProfile, demoQuests, demoStart, demoVerifyGps, demoVerifyStrava, demoVerifyVideo } from './services/demo-store.js';
+import { demoProfile, demoQuests, demoStart, demoVerifyGps, demoVerifyStrava, demoVerifyVideo, demoCreateQuest } from './services/demo-store.js';
 
 const app = express();
 const demoMode = !process.env.DATABASE_URL;
@@ -31,6 +31,16 @@ app.get('/api/me', asyncRoute(async (req, res) => {
   if (demoMode) return res.json(demoProfile());
   const profile = await prisma.user.findUniqueOrThrow({ where: { id: userId(req) }, include: { attributes: true, strava: { select: { athleteId: true } } } });
   res.json(profile);
+}));
+
+app.post('/api/quests/create', asyncRoute(async (req, res) => {
+  if (demoMode) {
+    const { title, category, attribute, xpReward, goldReward, evidenceType, distanceMeters, durationSeconds } = req.body;
+    if (!title || !category || !attribute) return res.status(400).json({ error: 'title, category, and attribute are required' });
+    const quest = demoCreateQuest({ title, category, attribute, xpReward: xpReward ?? 50, goldReward: goldReward ?? 15, evidenceType: evidenceType ?? 'VIDEO', distanceMeters, durationSeconds });
+    return res.status(201).json(quest);
+  }
+  res.status(501).json({ error: 'Quest creation requires database mode' });
 }));
 
 app.get('/api/quests', asyncRoute(async (_req, res) => {

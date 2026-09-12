@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { isInsideCheckpoint, matchConnectedActivity, Coordinates } from '../domain/evidence.js';
 import { trackDistanceMeters, TrackPoint, validateGpsTrack } from '../domain/gps.js';
+import { levelFromXp, rankFromLevel } from '../domain/progression.js';
 
 type DemoQuest = {
   id: string;
@@ -24,23 +25,21 @@ type DemoQuest = {
 type DemoCompletion = { id: string; userId: string; questId: string; status: 'STARTED' | 'VERIFIED'; };
 
 const now = new Date();
-const studyStart = new Date(now); studyStart.setHours(9, 0, 0, 0);
-const studyEnd = new Date(now); studyEnd.setHours(12, 0, 0, 0);
-const night = new Date(now); night.setHours(23, 59, 59, 999);
+const past = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+const future = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
 export const demoQuests: DemoQuest[] = [
-  { id: 'quest-water-2l', title: 'Drink Water', category: 'Hydration', attribute: 'DISCIPLINE', xpReward: 45, goldReward: 12, evidenceType: 'VIDEO', activeFrom: now, activeUntil: night },
-  { id: 'quest-study-summary', title: 'Study Summary', category: 'Studying', attribute: 'INTELLECT', xpReward: 100, goldReward: 35, evidenceType: 'VIDEO', activeFrom: studyStart, activeUntil: studyEnd },
-  { id: 'quest-run-3k', title: 'Run 3 KM', category: 'Running', attribute: 'ENDURANCE', xpReward: 80, goldReward: 20, evidenceType: 'CONNECTED_SOURCE', distanceMeters: 3000, durationSeconds: 900, activeFrom: now, activeUntil: new Date(now.getTime() + 24 * 60 * 60 * 1000) },
-  { id: 'quest-blue-vale', title: 'Blue Vale Checkpoint', category: 'Exploration', attribute: 'ENDURANCE', xpReward: 120, goldReward: 45, evidenceType: 'LOCATION_VIDEO', checkpointLat: 51.5007, checkpointLng: -0.1246, checkpointRadiusM: 150 },
-  { id: 'quest-read-20', title: 'Read 20 Pages', category: 'Reading', attribute: 'INTELLECT', xpReward: 40, goldReward: 10, evidenceType: 'VIDEO' }
+  { id: 'quest-water-2l', title: 'Drink Water', category: 'Hydration', attribute: 'DISCIPLINE', xpReward: 45, goldReward: 12, evidenceType: 'VIDEO', activeFrom: past, activeUntil: future },
+  { id: 'quest-study-summary', title: 'Study Summary', category: 'Studying', attribute: 'INTELLECT', xpReward: 150, goldReward: 40, evidenceType: 'VIDEO', activeFrom: past, activeUntil: future },
+  { id: 'quest-run-3k', title: 'Run 3 KM', category: 'Running', attribute: 'ENDURANCE', xpReward: 80, goldReward: 20, evidenceType: 'CONNECTED_SOURCE', distanceMeters: 3000, durationSeconds: 900, activeFrom: past, activeUntil: future },
+  { id: 'quest-read-20', title: 'Read 20 Pages', category: 'Reading', attribute: 'INTELLECT', xpReward: 40, goldReward: 10, evidenceType: 'VIDEO', activeFrom: past, activeUntil: future }
 ];
 
 const completions = new Map<string, DemoCompletion>();
 const usedHashes = new Set<string>();
 const awarded = new Set<string>();
-let demoXp = 2840;
-let demoGold = 1250;
+let demoXp = 0;
+let demoGold = 0;
 
 export function demoStart(userId: string, questId: string): { completionId: string; evidenceType: DemoQuest['evidenceType'] } {
   const quest = demoQuests.find((item) => item.id === questId);
@@ -105,4 +104,27 @@ export function demoVerifyStrava(userId: string, completionId: string, activity:
   return { ...award(completion, quest), activity };
 }
 
-export function demoProfile() { return { id: 'demo-user', displayName: 'Kenneth', xp: demoXp, gold: demoGold, level: 17, momentum: 12, attributes: [], strava: null }; }
+export function demoProfile(displayName = 'Hero') {
+  const level = levelFromXp(demoXp);
+  const rank = rankFromLevel(level);
+  return { id: 'demo-user', displayName, xp: demoXp, gold: demoGold, level, rank, momentum: 0, attributes: [], strava: null };
+}
+
+export function demoCreateQuest(input: { title: string; category: string; attribute: DemoQuest['attribute']; xpReward: number; goldReward: number; evidenceType: DemoQuest['evidenceType']; distanceMeters?: number; durationSeconds?: number }): DemoQuest {
+  const id = `quest-custom-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const quest: DemoQuest = {
+    id,
+    title: input.title,
+    category: input.category,
+    attribute: input.attribute,
+    xpReward: input.xpReward,
+    goldReward: input.goldReward,
+    evidenceType: input.evidenceType,
+    distanceMeters: input.distanceMeters,
+    durationSeconds: input.durationSeconds,
+    activeFrom: new Date(),
+    activeUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  };
+  demoQuests.push(quest);
+  return quest;
+}
