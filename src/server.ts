@@ -34,13 +34,22 @@ app.get('/api/me', asyncRoute(async (req, res) => {
 }));
 
 app.post('/api/quests/create', asyncRoute(async (req, res) => {
+  const body = z.object({
+    title: z.string().min(1),
+    category: z.string().min(1),
+    attribute: z.enum(['STRENGTH', 'ENDURANCE', 'INTELLECT', 'STRATEGY', 'DISCIPLINE', 'CREATIVITY']),
+    xpReward: z.number().int().min(1).default(50),
+    goldReward: z.number().int().min(0).default(15),
+    evidenceType: z.enum(['NONE', 'VIDEO', 'LOCATION_VIDEO', 'CONNECTED_SOURCE']).default('VIDEO'),
+    distanceMeters: z.number().int().positive().optional(),
+    durationSeconds: z.number().int().positive().optional(),
+  }).parse(req.body);
   if (demoMode) {
-    const { title, category, attribute, xpReward, goldReward, evidenceType, distanceMeters, durationSeconds } = req.body;
-    if (!title || !category || !attribute) return res.status(400).json({ error: 'title, category, and attribute are required' });
-    const quest = demoCreateQuest({ title, category, attribute, xpReward: xpReward ?? 50, goldReward: goldReward ?? 15, evidenceType: evidenceType ?? 'VIDEO', distanceMeters, durationSeconds });
+    const quest = demoCreateQuest(body);
     return res.status(201).json(quest);
   }
-  res.status(501).json({ error: 'Quest creation requires database mode' });
+  const quest = await prisma.quest.create({ data: body });
+  res.status(201).json(quest);
 }));
 
 app.get('/api/quests', asyncRoute(async (_req, res) => {
