@@ -21,7 +21,12 @@
     .topbar.hidden { display:none; }
     .topline,.brandline,.resource-row,.section-head,.quest-top,.quest-bottom,.arena-row,.recap-stat { display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .brandline { justify-content:flex-start; }
-    .avatar { width:44px; height:44px; border:3px solid var(--navy); border-bottom-width:5px; border-radius:15px; object-fit:cover; background:#38bdf8; display:grid; place-items:center; color:#fff; font:700 18px 'Lilita One'; }
+    .avatar { width:44px; height:44px; border:3px solid var(--navy); border-bottom-width:5px; border-radius:15px; object-fit:cover; background:#38bdf8; display:grid; place-items:center; color:#fff; font:700 18px 'Lilita One'; overflow:hidden; }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .avatar .empty { width:100%; height:100%; display:grid; place-items:center; }
+    .character-portrait { width:112px; height:112px; border:4px solid var(--navy); border-bottom-width:6px; border-radius:26px; overflow:hidden; background:linear-gradient(135deg,#bae6fd,#38bdf8 38%,#8b5cf6 100%); box-shadow:0 7px 0 var(--navy); }
+    .character-portrait img { width:100%; height:100%; object-fit:cover; display:block; }
+    .character-portrait.small { width:72px; height:72px; border-radius:18px; margin:0 auto 12px; }
     .player-name,.display { font-family:'Lilita One',sans-serif; }
     .player-name { font-size:19px; letter-spacing:.04em; text-shadow:0 2px 0 var(--navy); }
     .rank { display:block; color:#fef08a; font:700 11px 'Lilita One'; letter-spacing:.08em; }
@@ -112,11 +117,37 @@
     .capture-controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .capture-input { width:100%; margin-top:10px; padding:11px 12px; border:3px solid var(--navy); border-radius:12px; color:var(--navy); background:#fff; font:700 14px Manrope,sans-serif; }
     .capture-status { min-height:22px; margin:9px 0; color:#0369a1; font:700 13px 'Lilita One'; }
+    .capture-status.error { color:#b91c1c; }
     .gps-readout { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; }
     .gps-readout[hidden] { display:none !important; }
-    #study-fields[hidden] { display:none !important; }
+    #study-fields[hidden], #gym-fields[hidden] { display:none !important; }
     #strava-connect[hidden] { display:none !important; }
     #capture-video[hidden] { display:none !important; }
+    .leaderboard-list { display:grid; gap:10px; margin-top:12px; }
+    .leaderboard-card { display:grid; grid-template-columns:auto 44px 1fr auto; gap:10px; align-items:center; padding:9px 12px; border:3px solid #082f80; border-bottom-width:5px; border-radius:16px; background:linear-gradient(135deg,#91dcff 0%,#3fa9e5 100%); box-shadow:inset 0 2px 0 #d5f5ff88; }
+    .leaderboard-rank { width:32px; height:32px; display:grid; place-items:center; border:3px solid #082f80; border-radius:10px; background:linear-gradient(#fde68a,#f59e0b); font:700 13px 'Lilita One'; color:#78350f; }
+    .leaderboard-avatar { width:42px; height:42px; border:3px solid #fff; border-radius:50%; overflow:hidden; background:#dbeafe; box-shadow:0 0 0 2px #082f80; }
+    .leaderboard-avatar img { width:100%; height:100%; display:block; object-fit:cover; }
+    .leaderboard-meta strong { display:block; color:#fff; font-size:15px; text-shadow:0 1px 0 #082f80; }
+    .leaderboard-meta span { color:#e0f2fe; font-size:11px; font-weight:800; }
+    .leaderboard-score { color:#fff; font:700 16px 'Lilita One'; text-shadow:0 1px 0 #082f80; white-space:nowrap; }
+    .leaderboard-score:after { content:' ★'; color:#fde047; }
+    .arena-chart { display:grid; grid-template-columns:repeat(3,1fr); align-items:end; gap:9px; min-height:365px; margin-top:16px; padding:20px 10px 0; border:4px solid #082f80; border-bottom-width:7px; border-radius:20px; background:linear-gradient(180deg,#69c7f2 0%,#2488d6 100%); box-shadow:inset 0 5px 0 #b9edff66; }
+    .arena-podium { display:flex; min-width:0; height:325px; flex-direction:column; align-items:center; justify-content:flex-end; gap:7px; }
+    .arena-podium:nth-child(1) { order:2; }
+    .arena-podium:nth-child(2) { order:1; }
+    .arena-podium:nth-child(3) { order:3; }
+    .arena-podium-avatar { width:72px; height:72px; border:5px solid #fff; border-radius:50%; overflow:hidden; background:#bae6fd; box-shadow:0 0 0 4px #082f80,0 4px 0 #082f80; }
+    .arena-podium-avatar img { width:100%; height:100%; display:block; object-fit:cover; }
+    .arena-podium-name { max-width:100%; overflow:hidden; color:#fff; font:700 16px 'Lilita One'; text-overflow:ellipsis; text-shadow:0 2px 0 #082f80; white-space:nowrap; }
+    .arena-podium-score { color:#fff; font:700 21px 'Lilita One'; text-shadow:0 2px 0 #082f80; }
+    .arena-podium-score:after { content:' ★'; color:#fde047; }
+    .arena-podium-bar { display:flex; width:100%; min-height:74px; align-items:flex-start; justify-content:center; padding-top:10px; border:4px solid #082f80; border-bottom-width:7px; border-radius:22px 22px 7px 7px; color:#fff; background:linear-gradient(180deg,#fde047,#f59e0b); font:700 30px 'Lilita One'; text-shadow:0 2px 0 #78350f; }
+    .arena-podium:nth-child(1) .arena-podium-bar { background:linear-gradient(180deg,#fde047,#eab308); }
+    .arena-podium:nth-child(2) .arena-podium-bar { background:linear-gradient(180deg,#dbeafe,#94a3b8); }
+    .arena-podium:nth-child(3) .arena-podium-bar { background:linear-gradient(180deg,#fdba74,#ea580c); }
+    .arena-podium-rank { color:#fff; font:700 11px 'Lilita One'; letter-spacing:.08em; text-shadow:0 1px 0 #082f80; }
+    .arena-league-title { margin:18px -18px -18px; padding:12px; border-top:4px solid #082f80; border-radius:0 0 16px 16px; color:#fff; background:linear-gradient(#145bd1,#0843ad); text-align:center; font:700 22px 'Lilita One'; letter-spacing:.08em; text-shadow:0 2px 0 #082f80; }
     .gps-chip { padding:10px; border:3px solid var(--navy); border-radius:12px; background:#fff; font:700 12px 'Lilita One'; }
     #run-map { display:none; height:300px; margin:12px 0; overflow:hidden; border:4px solid var(--navy); border-radius:18px; box-shadow:0 4px 0 var(--navy); }
     #run-map.visible { display:block; }
@@ -192,6 +223,9 @@
           <div class="panel auth-panel">
             <h1>⚔️ Life RPG</h1>
             <p class="auth-subtitle">Turn your daily habits into an epic adventure</p>
+            <div class="character-portrait small" id="auth-photo-preview"><div class="empty">★</div></div>
+            <input type="file" id="auth-photo" accept="image/*" style="display:none" />
+            <label for="auth-photo" class="btn gold" style="display:block;width:100%;margin-bottom:12px">Add hero photo</label>
             <input id="auth-name" class="auth-input" placeholder="Enter your hero name" maxlength="20" autocomplete="off" />
             <button class="btn green" id="auth-signup">Begin Adventure</button>
             <div class="auth-divider" id="auth-returning" style="display:none">— or —</div>
@@ -202,27 +236,27 @@
 
       <!-- HOME SCREEN -->
       <section id="home" class="screen">
-        <div class="panel hero-panel wide"><div class="hero-meta"><div><span class="eyebrow">Solar Sanctuary</span><div class="level" id="home-level">LEVEL 1</div><span class="tag green" id="home-rank-tag">Noob</span></div><div style="text-align:right"><span class="micro">NEXT LEVEL</span><h3 id="home-xp-need">100 XP</h3><span class="micro" id="home-xp-total">0 TOTAL</span></div></div><div style="margin-top:16px"><div class="section-head"><b>XP CORE</b><strong id="home-xp-bar-label">0 / 100</strong></div><div class="meter"><span id="home-xp-bar" style="width:0%"></span></div></div></div>
+        <div class="panel hero-panel wide"><div class="hero-meta"><div class="character-portrait" id="home-portrait"></div><div><span class="eyebrow">Solar Sanctuary</span><div class="level" id="home-level">DAY 1</div><span class="tag green" id="home-rank-tag">Noob</span></div><div style="text-align:right"><span class="micro">NEXT DAY</span><h3 id="home-xp-need">2000 Stars</h3><span class="micro" id="home-xp-total">0 TOTAL</span></div></div><div style="margin-top:16px"><div class="section-head"><b>DAY CORE</b><strong id="home-xp-bar-label">0 / 2000</strong></div><div class="meter"><span id="home-xp-bar" style="width:0%"></span></div></div></div>
         <div class="panel wide"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Your build</span><h2>Attributes</h2></div><span class="tag blue">6 STATS</span></div><div id="stat-grid" class="stat-grid" style="margin-top:12px"></div></div>
         <div class="panel wide"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Today's path</span><h2>Quest Deck</h2></div><button class="btn purple" data-screen="quests">View all</button></div><div id="home-quests"></div></div>
       </section>
 
       <!-- QUESTS SCREEN -->
-      <section id="quests" class="screen"><div class="section-head"><div><span class="eyebrow">Daily campaign</span><h1>QUEST LOG</h1></div><button class="btn green" id="create-quest-btn">+ Create Quest</button></div><div class="filter-row"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="running">Running</button><button class="filter" data-filter="studying">Studying</button><button class="filter" data-filter="hydration">Hydration</button><button class="filter" data-filter="reading">Reading</button></div><div class="wide" id="quest-list"></div></section>
+      <section id="quests" class="screen"><div class="section-head"><div><span class="eyebrow">Daily campaign</span><h1>QUEST LOG</h1></div><button class="btn green" id="create-quest-btn">+ Create Quest</button></div><div class="filter-row"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="running">Running</button><button class="filter" data-filter="studying">Studying</button><button class="filter" data-filter="hydration">Hydration</button><button class="filter" data-filter="reading">Reading</button><button class="filter" data-filter="gym">Gym</button></div><div class="wide" id="quest-list"></div></section>
 
       <!-- HERO / PROFILE SCREEN -->
-      <section id="hero" class="screen"><div class="section-head"><div><span class="eyebrow">Character sheet</span><h1 id="hero-title">THE HERO</h1></div><span class="tag gold" id="hero-rank-tag">NOOB</span></div><div class="panel wide" style="text-align:center"><div class="avatar" style="width:110px;height:110px;font-size:48px;margin:0 auto 14px;border-width:4px;border-radius:22px;border-bottom-width:6px" id="hero-avatar">?</div><h2 id="hero-name-display">Hero</h2><p class="micro" style="margin-top:5px" id="hero-subtitle">Solar Knights • Level 1</p></div><div class="panel wide"><div class="section-head"><h2>Profile Stats</h2><span class="tag blue">LIVE</span></div><div style="margin-top:12px"><div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"><article class="stat" style="text-align:center;background:#e0f2fe"><h3>Level</h3><b id="hero-level">1</b></article><article class="stat" style="text-align:center;background:#fff7d6"><h3>XP</h3><b id="hero-xp">0</b></article><article class="stat" style="text-align:center;background:#dcfce7"><h3>Gold</h3><b id="hero-gold">0</b></article></div></div></div><div class="panel wide"><div class="section-head"><h2>Battle Attributes</h2><span class="tag blue">6 STATS</span></div><div id="hero-stats" class="stat-grid" style="margin-top:12px"></div></div><div class="panel wide"><div class="section-head"><h2>Completed Quests</h2></div><div id="hero-completed"></div></div></section>
+      <section id="hero" class="screen"><div class="section-head"><div><span class="eyebrow">Character sheet</span><h1 id="hero-title">THE HERO</h1></div><span class="tag gold" id="hero-rank-tag">NOOB</span></div><div class="panel wide" style="text-align:center"><div class="avatar" style="width:110px;height:110px;font-size:48px;margin:0 auto 14px;border-width:4px;border-radius:22px;border-bottom-width:6px" id="hero-avatar">?</div><h2 id="hero-name-display">Hero</h2><p class="micro" style="margin-top:5px" id="hero-subtitle">Solar Knights • Day 1</p></div><div class="panel wide"><div class="section-head"><h2>Profile Stats</h2><span class="tag blue">LIVE</span></div><div style="margin-top:12px"><div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"><article class="stat" style="text-align:center;background:#e0f2fe"><h3>Day</h3><b id="hero-level">1</b></article><article class="stat" style="text-align:center;background:#fff7d6"><h3>Stars</h3><b id="hero-xp">0</b></article><article class="stat" style="text-align:center;background:#dcfce7"><h3>Gold</h3><b id="hero-gold">0</b></article></div></div></div><div class="panel wide"><div class="section-head"><h2>Battle Attributes</h2><span class="tag blue">6 STATS</span></div><div id="hero-stats" class="stat-grid" style="margin-top:12px"></div></div><div class="panel wide"><div class="section-head"><h2>Completed Quests</h2></div><div id="hero-completed"></div></div></section>
 
-      <!-- ARENA SCREEN (simplified) -->
-      <section id="arena" class="screen"><div class="section-head"><div><span class="eyebrow">Weekly league</span><h1>ARENA</h1></div><span class="tag gold">COMING SOON</span></div><div class="panel dark wide" style="text-align:center;min-height:200px;display:flex;align-items:center;justify-content:center"><div><h2>Arena Battles</h2><p style="margin-top:8px;color:#bae6fd;font-weight:800">Compete against other players once you reach Level 5!</p></div></div></section>
+      <!-- ARENA SCREEN -->
+      <section id="arena" class="screen"><div class="section-head"><div><span class="eyebrow">Weekly league</span><h1>VIEWER BOARD</h1></div><span class="tag gold">LIVE</span></div><div class="panel wide" style="background:linear-gradient(180deg,#d8f4ff 0%,#8bd5f5 100%);border-color:#082f80"><div class="section-head"><h2>Top 3 challengers</h2><span class="tag gold">PODIUM</span></div><div id="arena-chart" class="arena-chart" aria-label="Top three players bar chart"></div><div class="arena-league-title">ELITE LEAGUE</div></div><div class="panel wide"><div class="section-head"><h2>Full leaderboard</h2><span class="tag blue">TOP 5</span></div><div id="leaderboard-list" class="leaderboard-list"></div></div><div class="panel wide"><div class="section-head"><h2>My rank</h2><span class="tag green" id="arena-rank">#--</span></div><div class="stat-grid" style="margin-top:12px;grid-template-columns:repeat(3,1fr)"><article class="stat" style="text-align:center"><h3>Streak</h3><b id="arena-streak">0</b></article><article class="stat" style="text-align:center"><h3>Stars</h3><b id="arena-xp">0</b></article><article class="stat" style="text-align:center"><h3>Gold</h3><b id="arena-gold">0</b></article></div></div></section>
     </main>
     <nav id="main-nav" class="hidden"><div class="nav-inner"><button class="nav-item active" data-screen="home"><span class="material-symbols-outlined">cottage</span>Home</button><button class="nav-item" data-screen="quests"><span class="material-symbols-outlined">explore</span>Quests</button><button class="nav-item" data-screen="hero"><span class="material-symbols-outlined">shield</span>Profile</button><button class="nav-item" data-screen="arena"><span class="material-symbols-outlined">leaderboard</span>Arena</button></div></nav>
 
     <!-- Capture / Proof Modal -->
-    <div id="capture-modal" class="capture-modal" role="dialog" aria-modal="true" aria-labelledby="capture-title"><div class="capture-sheet"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Evidence capture</span><h2 id="capture-title">Routine proof</h2></div><button class="btn gold" id="capture-close">Close</button></div><p id="capture-copy" class="capture-copy"></p><video id="capture-video" class="capture-video" autoplay muted playsinline></video><div id="run-map" aria-label="Live jogging route map"></div><div id="study-fields" hidden><input id="study-subject" class="capture-input" placeholder="What subject did you study?" /><textarea id="study-summary" class="capture-input" rows="3" placeholder="Summarize what you learned in your own words"></textarea></div><div id="gps-readout" class="gps-readout" hidden><div class="gps-chip">GPS <span id="gps-state">Waiting</span></div><div class="gps-chip">Distance <span id="gps-distance">0 m</span></div><div class="gps-chip">Time <span id="gps-time">00:00</span></div><div class="gps-chip">Pace <span id="gps-pace">--:-- / km</span></div></div><div id="capture-status" class="capture-status">Camera permission is required.</div><div class="capture-controls"><button class="btn purple" id="capture-start">Start 5s proof</button><button class="btn green" id="capture-submit" disabled>Submit proof</button></div><button class="btn blue" id="strava-connect" hidden style="width:100%;margin-top:10px">Connect Strava instead</button></div></div>
+    <div id="capture-modal" class="capture-modal" role="dialog" aria-modal="true" aria-labelledby="capture-title"><div class="capture-sheet"><div class="section-head"><div><span class="eyebrow" style="color:#0284c7">Evidence capture</span><h2 id="capture-title">Routine proof</h2></div><button class="btn gold" id="capture-close">Close</button></div><p id="capture-copy" class="capture-copy"></p><video id="capture-video" class="capture-video" autoplay muted playsinline></video><div id="run-map" aria-label="Live jogging route map"></div><div id="study-fields" hidden><input id="study-subject" class="capture-input" placeholder="What subject did you study?" /><textarea id="study-summary" class="capture-input" rows="3" placeholder="Summarize what you learned in your own words"></textarea></div><div id="hydration-fields" hidden><input id="hydration-amount" class="capture-input" type="number" min="100" step="10" placeholder="How much water did you drink? (mL)" /><div class="micro" style="margin-top:8px;color:#b45309;font-weight:800">Need at least 250 mL to verify real hydration.</div></div><div id="gym-fields" hidden><input id="gym-score" class="capture-input" type="number" min="1" step="1" placeholder="What did you hit today? e.g. 180 lb bench" /><input id="gym-note" class="capture-input" placeholder="Optional note: 5x5 PR / 30 min incline walk" /></div><div id="gps-readout" class="gps-readout" hidden><div class="gps-chip">GPS <span id="gps-state">Waiting</span></div><div class="gps-chip">Distance <span id="gps-distance">0 m</span></div><div class="gps-chip">Time <span id="gps-time">00:00</span></div><div class="gps-chip">Pace <span id="gps-pace">--:-- / km</span></div></div><div id="capture-status" class="capture-status">Camera permission is required.</div><div class="capture-controls"><button class="btn purple" id="capture-start">Start 5s proof</button><button class="btn green" id="capture-submit" disabled>Submit proof</button></div><button class="btn blue" id="strava-connect" hidden style="width:100%;margin-top:10px">Connect Strava instead</button></div></div>
 
     <!-- Quest Create Modal -->
-    <div id="create-modal" class="create-modal" role="dialog"><div class="create-sheet"><div class="section-head"><h2>Create New Quest</h2><button class="btn gold" id="create-close">Close</button></div><label>Quest Title</label><input id="create-title" class="capture-input" placeholder="e.g. Morning Jog, Study Physics" style="margin-top:4px" /><label>Category</label><select id="create-category" class="capture-input" style="margin-top:4px"><option value="Running">Running</option><option value="Studying">Studying</option><option value="Hydration">Hydration</option><option value="Reading">Reading</option><option value="Custom">Custom</option></select><div class="create-row"><div><label>XP Reward</label><input id="create-xp" class="capture-input" type="number" value="80" min="10" max="500" style="margin-top:4px" /></div><div><label>Gold Reward</label><input id="create-gold" class="capture-input" type="number" value="20" min="5" max="200" style="margin-top:4px" /></div></div><button class="btn green" id="create-submit" style="width:100%;margin-top:18px">Create Quest</button></div></div>
+    <div id="create-modal" class="create-modal" role="dialog"><div class="create-sheet"><div class="section-head"><h2>Create New Quest</h2><button class="btn gold" id="create-close">Close</button></div><label>Quest Title</label><input id="create-title" class="capture-input" placeholder="e.g. Morning Jog, Study Physics" style="margin-top:4px" /><label>Category</label><select id="create-category" class="capture-input" style="margin-top:4px"><option value="Running">Running</option><option value="Studying">Studying</option><option value="Hydration">Hydration</option><option value="Reading">Reading</option><option value="Gym">Gym</option><option value="Custom">Custom</option></select><div class="create-row"><div><label>XP Reward</label><input id="create-xp" class="capture-input" type="number" value="80" min="10" max="500" style="margin-top:4px" /></div><div><label>Gold Reward</label><input id="create-gold" class="capture-input" type="number" value="20" min="5" max="200" style="margin-top:4px" /></div></div><button class="btn green" id="create-submit" style="width:100%;margin-top:18px">Create Quest</button></div></div>
 
     <!-- Validation Overlay -->
     <div id="validation-overlay" class="validation-overlay">
@@ -257,8 +291,17 @@
       Studying: { attribute:'INTELLECT', evidence:'study', xp:150, gold:40 },
       Hydration:{ attribute:'DISCIPLINE', evidence:'video', xp:45, gold:12 },
       Reading:  { attribute:'INTELLECT', evidence:'video', xp:40, gold:10 },
+      Gym:      { attribute:'STRENGTH', evidence:'gym', xp:120, gold:25 },
       Custom:   { attribute:'DISCIPLINE', evidence:'video', xp:50, gold:15 },
     };
+
+    const DUMMY_LEADERS = [
+      { name:'Astra', xp: 1480, gold: 260, streak: 18 },
+      { name:'Brio', xp: 1320, gold: 220, streak: 15 },
+      { name:'Nova', xp: 1215, gold: 210, streak: 12 },
+      { name:'Zeal', xp: 1100, gold: 180, streak: 10 },
+      { name:'Kite', xp: 965, gold: 155, streak: 7 },
+    ];
 
     const RANKS = [
       { minLevel:1, name:'NOOB' },
@@ -269,16 +312,40 @@
       { minLevel:50, name:'ELITE' },
     ];
 
-    function xpRequired(level) { return Math.ceil(100 * Math.pow(level, 1.5)); }
-    function levelFromXp(totalXp) { let lv=1, rem=totalXp; while(rem>=xpRequired(lv)){rem-=xpRequired(lv);lv++;} return lv; }
-    function xpIntoLevel(totalXp) { let lv=1, rem=totalXp; while(rem>=xpRequired(lv)){rem-=xpRequired(lv);lv++;} return rem; }
+    function xpRequired(level) { return 2000; }
+    function levelFromXp(totalXp) { return Math.max(1, Math.floor(totalXp / 2000) + 1); }
+    function xpIntoLevel(totalXp) { return totalXp % 2000; }
     function rankFromLevel(level) { return [...RANKS].reverse().find(r=>level>=r.minLevel)?.name ?? 'NOOB'; }
+
+    function makeCharacterArt(label, accentA='#38bdf8', accentB='#8b5cf6') {
+      const safe = (label || 'H').slice(0, 1).toUpperCase();
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="${accentA}"/>
+              <stop offset="100%" stop-color="${accentB}"/>
+            </linearGradient>
+          </defs>
+          <rect width="160" height="160" rx="26" fill="url(#g)"/>
+          <circle cx="80" cy="58" r="30" fill="#fef3c7"/>
+          <path d="M50 120c6-24 24-35 30-35s24 11 30 35v20H50z" fill="#0f2744" opacity="0.9"/>
+          <path d="M59 64c8-20 34-26 42-8 7 14-9 28-21 28-12 0-21-9-21-20z" fill="#0f2744" opacity="0.9"/>
+          <circle cx="69" cy="59" r="3" fill="#0f2744"/>
+          <circle cx="90" cy="59" r="3" fill="#0f2744"/>
+          <path d="M70 74c6 6 14 6 20 0" stroke="#0f2744" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <text x="80" y="145" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#fff">${safe}</text>
+        </svg>
+      `;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
 
     function loadUser() { try { return JSON.parse(localStorage.getItem('lifeRpgUser')); } catch { return null; } }
     function saveUser(user) { localStorage.setItem('lifeRpgUser', JSON.stringify(user)); }
-    function createUser(name) {
+    function createUser(name, photo) {
       const user = {
         displayName: name,
+        photo: photo || makeCharacterArt(name),
         xp: 0,
         gold: 0,
         level: 1,
@@ -303,10 +370,26 @@
       document.getElementById('auth-returning-name').textContent = existing.displayName;
     }
 
+    const authPhotoInput = document.getElementById('auth-photo');
+    const authPhotoPreview = document.getElementById('auth-photo-preview');
+    authPhotoInput.addEventListener('change', (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = String(reader.result || '');
+        authPhotoPreview.innerHTML = `<img src="${result}" alt="Hero photo preview" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+
     document.getElementById('auth-signup').addEventListener('click', () => {
       const name = document.getElementById('auth-name').value.trim();
       if (!name) { document.getElementById('auth-name').focus(); return; }
-      currentUser = createUser(name);
+      const photo = authPhotoInput.files && authPhotoInput.files[0]
+        ? authPhotoPreview.querySelector('img')?.src || makeCharacterArt(name)
+        : makeCharacterArt(name);
+      currentUser = createUser(name, photo);
       enterApp();
     });
 
@@ -330,6 +413,50 @@
     /* ═══════════════════════════════════════════════════
        UI REFRESH
     ═══════════════════════════════════════════════════ */
+    function avatarMarkup(label, photo) {
+      const safeLabel = (label || '?').trim() || '?';
+      if (photo && photo.startsWith('data:image')) return `<img src="${photo}" alt="${safeLabel}" />`;
+      return `<div class="empty">${safeLabel.charAt(0).toUpperCase()}</div>`;
+    }
+
+    function renderLeaderboard() {
+      const entries = [...DUMMY_LEADERS];
+      const currentIndex = entries.findIndex(item => item.name.toLowerCase() === (currentUser?.displayName || '').toLowerCase());
+      if (currentIndex >= 0) entries.splice(currentIndex, 1);
+      if (currentUser) {
+        entries.push({ name: currentUser.displayName, xp: currentUser.xp, gold: currentUser.gold, streak: currentUser.momentum || 4 });
+      }
+      entries.sort((a, b) => b.xp - a.xp);
+      const podiumEntries = entries.slice(0, 3);
+      const podiumMax = Math.max(...podiumEntries.map(entry => entry.xp), 1);
+      document.getElementById('arena-chart').innerHTML = podiumEntries.map((entry, index) => `
+        <div class="arena-podium">
+          <div class="arena-podium-avatar">${avatarMarkup(entry.name, entry.photo || makeCharacterArt(entry.name, ['#fbbf24','#38bdf8','#fb7185'][index], ['#f97316','#2563eb','#be123c'][index]))}</div>
+          <div class="arena-podium-score">${entry.xp} Stars</div>
+          <div class="arena-podium-name">${entry.name}</div>
+          <div class="arena-podium-bar" style="height:${Math.max(34, Math.round((entry.xp / podiumMax) * 145))}px">#${index + 1}</div>
+          <div class="arena-podium-rank">${index === 0 ? 'CHAMPION' : index === 1 ? 'RUNNER-UP' : 'THIRD'}</div>
+        </div>
+      `).join('');
+      const list = entries.slice(0, 5).map((entry, index) => `
+        <div class="leaderboard-card">
+          <div class="leaderboard-rank">${index + 1}</div>
+          <div class="leaderboard-avatar">${avatarMarkup(entry.name, entry.photo || makeCharacterArt(entry.name, '#38bdf8', '#2563eb'))}</div>
+          <div class="leaderboard-meta">
+            <strong>${entry.name}</strong>
+            <span>Streak ${entry.streak}d • ${entry.gold} gold</span>
+          </div>
+          <div class="leaderboard-score">${entry.xp} Stars</div>
+        </div>
+      `).join('');
+      document.getElementById('leaderboard-list').innerHTML = list;
+      const myRank = entries.findIndex(entry => entry.name.toLowerCase() === (currentUser?.displayName || '').toLowerCase()) + 1;
+      document.getElementById('arena-rank').textContent = myRank ? `#${myRank}` : '#--';
+      document.getElementById('arena-streak').textContent = currentUser?.momentum || 4;
+      document.getElementById('arena-xp').textContent = currentUser?.xp || 0;
+      document.getElementById('arena-gold').textContent = currentUser?.gold || 0;
+    }
+
     function refreshUI() {
       if (!currentUser) return;
       const u = currentUser;
@@ -339,22 +466,20 @@
       const xpNeed = xpRequired(u.level);
       const pct = Math.min(100, (xpInLvl / xpNeed) * 100);
 
-      // Topbar
-      document.getElementById('top-avatar').textContent = u.displayName.charAt(0).toUpperCase();
-      document.getElementById('top-name').innerHTML = `${u.displayName.toUpperCase()} <span class="tag blue">LV ${u.level}</span>`;
+      document.getElementById('top-avatar').innerHTML = avatarMarkup(u.displayName, u.photo);
+      document.getElementById('top-name').innerHTML = `${u.displayName.toUpperCase()} <span class="tag blue">DAY ${u.level}</span>`;
       document.getElementById('top-rank').textContent = rank;
       document.getElementById('gold-balance').textContent = `● ${u.gold.toLocaleString()} G`;
       document.getElementById('momentum-display').textContent = `🔥 ${u.momentum}`;
 
-      // Home hero
-      document.getElementById('home-level').textContent = `LEVEL ${u.level}`;
+      document.getElementById('home-portrait').innerHTML = avatarMarkup(u.displayName, u.photo);
+      document.getElementById('home-level').textContent = `DAY ${u.level}`;
       document.getElementById('home-rank-tag').textContent = rank;
-      document.getElementById('home-xp-need').textContent = `${xpNeed - xpInLvl} XP`;
+      document.getElementById('home-xp-need').textContent = `${xpNeed - xpInLvl} Stars`;
       document.getElementById('home-xp-total').textContent = `${u.xp} TOTAL`;
       document.getElementById('home-xp-bar-label').textContent = `${xpInLvl} / ${xpNeed}`;
       document.getElementById('home-xp-bar').style.width = `${pct}%`;
 
-      // Stats
       const statNames = [['Strength','STRENGTH','Fitness'],['Endurance','ENDURANCE','Cardio'],['Intellect','INTELLECT','Study'],['Strategy','STRATEGY','Chess'],['Discipline','DISCIPLINE','Habits'],['Creativity','CREATIVITY','Projects']];
       const statMarkup = statNames.map(([name,key,source]) => {
         const val = u.stats[key] || 0;
@@ -363,17 +488,15 @@
       document.getElementById('stat-grid').innerHTML = statMarkup;
       document.getElementById('hero-stats').innerHTML = statMarkup;
 
-      // Hero / Profile screen
       document.getElementById('hero-title').textContent = `THE ${u.displayName.toUpperCase()}`;
       document.getElementById('hero-rank-tag').textContent = rank;
-      document.getElementById('hero-avatar').textContent = u.displayName.charAt(0).toUpperCase();
+      document.getElementById('hero-avatar').innerHTML = avatarMarkup(u.displayName, u.photo);
       document.getElementById('hero-name-display').textContent = u.displayName;
-      document.getElementById('hero-subtitle').textContent = `Solar Knights • Level ${u.level} • ${rank}`;
+      document.getElementById('hero-subtitle').textContent = `Solar Knights • Day ${u.level} • ${rank}`;
       document.getElementById('hero-level').textContent = u.level;
       document.getElementById('hero-xp').textContent = u.xp;
       document.getElementById('hero-gold').textContent = u.gold;
 
-      // Completed quests list
       const completedEl = document.getElementById('hero-completed');
       if (u.completedQuests.length === 0) {
         completedEl.innerHTML = '<p style="color:var(--muted);font-weight:800;margin-top:10px;text-align:center">No quests completed yet. Start your journey!</p>';
@@ -383,6 +506,7 @@
         ).join('');
       }
 
+      renderLeaderboard();
       saveUser(u);
     }
 
@@ -408,6 +532,8 @@
         evidence = 'gps';
       } else if (isStudying) {
         evidence = 'study';
+      } else if ((q.category || '').toLowerCase() === 'gym') {
+        evidence = 'gym';
       } else {
         evidence = 'video';
       }
@@ -419,6 +545,7 @@
       let detail = 'Camera-only proof • 5 second capture.';
       if (evidence === 'gps') detail = 'Live GPS route tracking • start and run.';
       else if (evidence === 'study') detail = 'Record proof • add subject and summary.';
+      else if (evidence === 'gym') detail = 'Hit log • enter what you lifted today.';
 
       return {
         id: q.id,
@@ -427,7 +554,7 @@
         title: q.title,
         detail,
         reward: `+${q.xpReward} XP  •  +${q.goldReward} G`,
-        action: evidence === 'gps' ? 'Start GPS run' : 'Record proof',
+        action: evidence === 'gps' ? 'Start GPS run' : evidence === 'gym' ? 'Log lift' : 'Record proof',
         evidence,
         xpReward: q.xpReward,
         goldReward: q.goldReward,
@@ -464,7 +591,7 @@
     const captureStatus = document.getElementById('capture-status');
     const captureVideo = document.getElementById('capture-video');
 
-    function setCaptureStatus(msg) { captureStatus.textContent = msg; }
+    function setCaptureStatus(msg, isError = false) { captureStatus.textContent = msg; captureStatus.classList.toggle('error', isError); }
     function closeCapture() {
       if (capture.stream) capture.stream.getTracks().forEach(t => t.stop());
       if (capture.watchId !== null) navigator.geolocation.clearWatch(capture.watchId);
@@ -496,23 +623,30 @@
         document.getElementById('capture-copy').textContent = 'Record a five-second proof clip after studying. Add the subject and a short summary for review.';
       } else if (questUI.evidence === 'gps') {
         document.getElementById('capture-copy').textContent = 'Press start, allow GPS, and move naturally. The red line is your live route; press stop when you finish.';
+      } else if (questUI.evidence === 'gym') {
+        document.getElementById('capture-copy').textContent = 'Tell us what you hit today. We use the number to award strength points and reward gold.';
+      } else if ((quest.category || '').toLowerCase() === 'hydration' || /water/i.test(quest.title || '')) {
+        document.getElementById('capture-copy').textContent = 'Keep the water and your face in frame, then record a five-second proof clip. Enter the amount you drank for verification.';
       } else {
         document.getElementById('capture-copy').textContent = 'Keep the camera in-app. Show the activity and take one continuous five-second proof clip.';
       }
 
-      // Only show GPS readout for running/gps quests
       const isGps = questUI.evidence === 'gps';
-      document.getElementById('capture-video').hidden = isGps;
+      const isGym = questUI.evidence === 'gym';
+      const isHydration = (quest.category || '').toLowerCase() === 'hydration' || /water/i.test(quest.title || '');
+      document.getElementById('capture-video').hidden = isGps || isGym;
       document.getElementById('study-fields').hidden = questUI.evidence !== 'study';
+      document.getElementById('gym-fields').hidden = !isGym;
+      document.getElementById('hydration-fields').hidden = !isHydration;
       document.getElementById('gps-readout').hidden = !isGps;
       document.getElementById('run-map').classList.toggle('visible', isGps);
       document.getElementById('strava-connect').hidden = !isGps;
-      document.getElementById('capture-start').hidden = isGps;
+      document.getElementById('capture-start').hidden = isGps || isGym;
       document.getElementById('capture-start').textContent = 'Start 5s proof';
       document.getElementById('capture-start').disabled = false;
-      document.getElementById('capture-submit').hidden = !isGps;
-      document.getElementById('capture-submit').disabled = true;
-      document.getElementById('capture-submit').textContent = 'Stop & submit';
+      document.getElementById('capture-submit').hidden = false;
+      document.getElementById('capture-submit').disabled = isGps ? true : false;
+      document.getElementById('capture-submit').textContent = isGps ? 'Stop & submit' : isHydration ? 'Verify hydration' : isGym ? 'Submit score' : 'Submit proof';
       setCaptureStatus('Starting secure quest session…');
 
       if (isGps) setupRunMap();
@@ -625,7 +759,7 @@
       const messages = [
         { text:'Checking proof…', sub:'Analyzing your evidence submission' },
         { text:'Validating evidence…', sub:'Cross-referencing quest requirements' },
-        { text:'Almost there…', sub:'Computing rewards and stat updates' },
+        { text:'Almost there…', sub:'Computing star and gold updates' },
       ];
 
       let step = 0;
@@ -646,7 +780,7 @@
         textEl.style.display = 'none';
         subEl.style.display = 'none';
 
-        document.getElementById('validation-reward-xp').textContent = `+${xpAwarded} XP`;
+        document.getElementById('validation-reward-xp').textContent = `+${xpAwarded} Stars`;
         document.getElementById('validation-reward-gold').textContent = `+${goldAwarded} Gold earned`;
         rewardEl.classList.add('show');
 
@@ -683,8 +817,8 @@
 
     function showLevelUp(newLevel) {
       const rank = rankFromLevel(newLevel);
-      document.getElementById('levelup-title').textContent = 'LEVEL UP!';
-      document.getElementById('levelup-detail').textContent = `You reached Level ${newLevel} • ${rank}`;
+      document.getElementById('levelup-title').textContent = 'DAY UP!';
+      document.getElementById('levelup-detail').textContent = `You reached Day ${newLevel} • ${rank}`;
       document.getElementById('levelup-overlay').classList.add('open');
     }
 
@@ -696,6 +830,29 @@
        SUBMIT PROOF — VIDEO
     ═══════════════════════════════════════════════════ */
     async function submitVideoProof() {
+      if (!capture.chunks || capture.chunks.length === 0) {
+        setCaptureStatus('Verification error: no video proof was recorded.', true);
+        return;
+      }
+
+      const isHydration = (capture.questRaw?.category || '').toLowerCase() === 'hydration' || /water/i.test(capture.quest?.title || '');
+      if (isHydration) {
+        const waterMl = Number(document.getElementById('hydration-amount').value || 0);
+        if (!waterMl || waterMl < 250) {
+          setCaptureStatus('Verification failed: you did not drink enough water. Need at least 250 mL.', true);
+          return;
+        }
+      }
+
+      if (capture.quest.evidence === 'study') {
+        const subject = document.getElementById('study-subject').value.trim();
+        const summary = document.getElementById('study-summary').value.trim();
+        if (!subject || !summary) {
+          setCaptureStatus('Verification failed: study subject and summary are required.', true);
+          return;
+        }
+      }
+
       const blob = new Blob(capture.chunks, { type:'video/webm' });
       const body = new FormData();
       body.append('video', blob, 'routine-proof.webm');
@@ -703,6 +860,9 @@
       if (capture.quest.evidence === 'study') {
         body.append('subject', document.getElementById('study-subject').value);
         body.append('summary', document.getElementById('study-summary').value);
+      }
+      if (isHydration) {
+        body.append('waterMl', String(Number(document.getElementById('hydration-amount').value || 0)));
       }
       try {
         const res = await fetch(`/api/completions/${capture.completionId}/video`, { method:'POST', headers:{'x-user-id':'demo-user'}, body });
@@ -715,9 +875,24 @@
         const attr = capture.questRaw.attribute || 'DISCIPLINE';
         showValidationOverlay(xp, gold, capture.quest.title, attr);
       } catch(error) {
-        setCaptureStatus(error.message || 'Upload failed.');
+        setCaptureStatus(error.message || 'Upload failed.', true);
         document.getElementById('capture-start').disabled = false;
       }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SUBMIT PROOF — GYM
+    ═══════════════════════════════════════════════════ */
+    function submitGymProof() {
+      const scoreValue = Number(document.getElementById('gym-score').value || 0);
+      if (!scoreValue || scoreValue <= 0) {
+        setCaptureStatus('Tell us what you hit today to earn points.');
+        return;
+      }
+      const xp = Math.max(40, Math.round(scoreValue * 1.1));
+      const gold = Math.max(15, Math.round(scoreValue * 0.35));
+      closeCapture();
+      showValidationOverlay(xp, gold, capture.quest.title, 'STRENGTH');
     }
 
     /* ═══════════════════════════════════════════════════
@@ -769,7 +944,7 @@
       const config = CATEGORY_MAP[category] || CATEGORY_MAP.Custom;
       const xpReward = Number(document.getElementById('create-xp').value) || config.xp;
       const goldReward = Number(document.getElementById('create-gold').value) || config.gold;
-      const evidenceType = config.evidence === 'gps' ? 'CONNECTED_SOURCE' : 'VIDEO';
+      const evidenceType = config.evidence === 'gps' ? 'CONNECTED_SOURCE' : config.evidence === 'gym' ? 'VIDEO' : 'VIDEO';
 
       try {
         const res = await fetch('/api/quests/create', {
@@ -791,7 +966,12 @@
        EVENT DELEGATION
     ═══════════════════════════════════════════════════ */
     document.getElementById('capture-start').addEventListener('click', () => capture.quest?.evidence === 'gps' ? startGpsTracking() : recordProof());
-    document.getElementById('capture-submit').addEventListener('click', () => capture.quest?.evidence === 'gps' ? submitGpsProof() : submitVideoProof());
+    document.getElementById('capture-submit').addEventListener('click', () => {
+      if (capture.quest?.evidence === 'gps') return submitGpsProof();
+      if (capture.quest?.evidence === 'gym') return submitGymProof();
+      if ((capture.questRaw?.category || '').toLowerCase() === 'hydration' || /water/i.test(capture.quest?.title || '')) return submitVideoProof();
+      return submitVideoProof();
+    });
     document.getElementById('capture-close').addEventListener('click', closeCapture);
 
     document.getElementById('strava-connect').addEventListener('click', async () => {
@@ -824,6 +1004,13 @@
         item.hidden = key !== 'all' && item.dataset.type !== key;
       });
     }));
+
+    const filters = ['all','running','studying','hydration','reading','gym'];
+    document.querySelectorAll('.filter').forEach(filter => {
+      if (!filters.includes(filter.dataset.filter)) {
+        filter.remove();
+      }
+    });
   </script>
 </body>
 </html>
